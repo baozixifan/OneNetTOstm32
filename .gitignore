@@ -13,3 +13,10 @@ output/MQTTTEMP.build_log.htm
 *.o
 
 output/MQTTTEMP.build_log.htm
+output/bc35.o
+output/beep.o
+output/delay.o
+output/adxl362.o
+output/core_cm3.o
+output/dht11.o
+*.o
