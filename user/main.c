@@ -134,8 +134,7 @@ int main(void)
 				UsartPrintf(USART_DEBUG, "+++++++++++++++++++++++++++*******");
         dataPtr = BC35_GetDATA(250);
         if(dataPtr != NULL)
-				{
-				
+				{			
 	      UsartPrintf(USART_DEBUG, "********************\r\n");		
 				StringToHex(mqttRevdatahex, dataPtr);								
 				}
