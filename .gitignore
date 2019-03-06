@@ -21,3 +21,9 @@ output/core_cm3.o
 output/dht11.o
 *.o
 output/MQTTTEMP.build_log.htm
+output/main.crf
+output/MQTTTEMP.htm
+output/MQTTTEMP.build_log.htm
+output/MQTTTEMP.axf
+output/mqtt_STM32F103.dep
+output/main.o
