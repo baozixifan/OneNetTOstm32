@@ -138,8 +138,7 @@ int main(void)
 				
 	      UsartPrintf(USART_DEBUG, "********************\r\n");		
 
-				StringToHex(mqttRevdatahex, dataPtr);
-									
+				StringToHex(mqttRevdatahex, dataPtr);								
 				}
             OneNet_RevPro(mqttRevdatahex);				
 				    ClearRAM((u8*)mqttRevdatahex,200);         //删包
