@@ -20,3 +20,4 @@ output/adxl362.o
 output/core_cm3.o
 output/dht11.o
 *.o
+output/MQTTTEMP.build_log.htm
