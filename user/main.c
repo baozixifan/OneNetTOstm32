@@ -130,6 +130,7 @@ int main(void)
 //        }		
 			if(BC35_GetNSONMI(250))
 			{
+				
 				UsartPrintf(USART_DEBUG, "+++++++++++++++++++++++++++*******");
         dataPtr = BC35_GetDATA(250);
         if(dataPtr != NULL)
@@ -139,6 +140,7 @@ int main(void)
 				}
             OneNet_RevPro(mqttRevdatahex);				
 				    ClearRAM((u8*)mqttRevdatahex,200);         //删包
+				
 			}
         DelayXms(10);
 	
