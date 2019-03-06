@@ -127,8 +127,7 @@ int main(void)
 //            OneNet_SendData();									//发送数据
 //            timeCount = 0;
 //            BC35_Clear();
-//        }
-			
+//        }		
 			if(BC35_GetNSONMI(250))
 			{
 				UsartPrintf(USART_DEBUG, "+++++++++++++++++++++++++++*******");
