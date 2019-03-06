@@ -12,3 +12,4 @@ output/MQTTTEMP.htm
 output/MQTTTEMP.build_log.htm
 *.o
 
+output/MQTTTEMP.build_log.htm
