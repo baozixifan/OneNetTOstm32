@@ -387,12 +387,6 @@ unsigned char *BC35_GetDATA(unsigned short timeOut)
             else
             {
                 UsartPrintf(USART_DEBUG, "收到数据\r\n");
-							
-					for (int i = 0; i < 128; i++)
-					{				
-					 UsartPrintf(USART_DEBUG,"BC35_buf[%d] = %c\r\n", i,BC35_buf[i]);
-					}
-							
                 token = strtok(BC35_buf,","); //将BC35_buf根据逗号分解。
 							
 							while(token != NULL&&i < 4)
