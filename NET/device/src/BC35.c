@@ -38,7 +38,7 @@
 #define BC35_ONENET_INFO "AT+NSOCO=1,183.230.40.39,6002\r\n"  //"AT+IPSTART=\"TCP\",\"183.230.40.39\",6002\r\n"
 
 
-unsigned char BC35_buf[128];        //接收模块的反馈信息
+unsigned char BC35_buf[200];        //接收模块的反馈信息
 unsigned short BC35_cnt = 0, BC35_cntPre = 0;
 
 
@@ -243,10 +243,10 @@ void BC35_SENDDATA(unsigned char *data, unsigned short len)
 		
 		//字符数组转化为字符串
 		
-				for (int j = 0; j < total_len; j++)
-		{
-			UsartPrintf(USART_DEBUG,"SendBuf[%d] = %c\r\n", j, SendBuf[j]);//输出转化后的字符串数据包
-		}
+//				for (int j = 0; j < total_len; j++)
+//		{
+//			UsartPrintf(USART_DEBUG,"SendBuf[%d] = %c\r\n", j, SendBuf[j]);//输出转化后的字符串数据包
+//		}
 
 
     if(!BC35_SendREVCMD(SendBuf,total_len, "OK"))				//若发送数据成功则打印函数体内信息
@@ -387,12 +387,18 @@ unsigned char *BC35_GetDATA(unsigned short timeOut)
             else
             {
                 UsartPrintf(USART_DEBUG, "收到数据\r\n");
+							
+					for (int i = 0; i < 128; i++)
+					{				
+					 UsartPrintf(USART_DEBUG,"BC35_buf[%d] = %c\r\n", i,BC35_buf[i]);
+					}
+							
                 token = strtok(BC35_buf,","); //将BC35_buf根据逗号分解。
 							
 							while(token != NULL&&i < 4)
 							{
 								i++;
-								UsartPrintf(USART_DEBUG,(char *)token);
+//								UsartPrintf(USART_DEBUG,(char *)token);
 								token = strtok(NULL,",");																
 							}
 							
