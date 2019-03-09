@@ -94,7 +94,7 @@ _Bool BC35_WaitRecive(void)
 //==========================================================
 //	函数名称：	BC35_SendCmd
 //
-//	函数功能：	发送命令
+//	函数功能：	发送字符串命令，并检查返回指令是否正确。
 //
 //	入口参数：	cmd：命令
 //				res：需要检查的返回指令
@@ -135,7 +135,7 @@ _Bool BC35_SendCmd(char *cmd, char *res)
 //==========================================================
 //	函数名称：	BC35_SendREVCMD
 //
-//	函数功能：	传入数据和数据长度，并检查返回信息
+//	函数功能：	发送十六进制数组数据和数据长度，并检查返回指令是否正确。
 //
 //	入口参数：	cmd：命令
 //              len: 命令长度
@@ -149,7 +149,7 @@ _Bool BC35_SendREVCMD(char *cmd,unsigned short len,char *res)
 {
 
     unsigned char timeOut = 200;
-	  char flag = 0;
+	  char flag = 0;//重发标志位，仅重发一次
 
     Usart_SendString(USART2, (unsigned char *)cmd, len);
     DelayXms(200);
@@ -196,16 +196,16 @@ _Bool BC35_SendREVCMD(char *cmd,unsigned short len,char *res)
 //
 //	说明：		
 //==========================================================
-_Bool BC35_SendRevCmd(char *cmd, char *res)
-{
+//_Bool BC35_SendRevCmd(char *cmd, char *res)
+//{
 
-    BC35_Clear();
+//    BC35_Clear();
 
-    Usart_SendString(USART2, (unsigned char *)cmd, strlen((const char *)cmd));
-    DelayXms(200);
+//    Usart_SendString(USART2, (unsigned char *)cmd, strlen((const char *)cmd));
+//    DelayXms(200);
 
-    return 0;
-}
+//    return 0;
+//}
 
  //==========================================================
 //	函数名称：	BC35_SENDDATA
@@ -241,22 +241,19 @@ void BC35_SENDDATA(unsigned char *data, unsigned short len)
 
 		total_len = cmd_len + len + 2;
 		
+		//字符数组转化为字符串
+		
 				for (int j = 0; j < total_len; j++)
 		{
 			UsartPrintf(USART_DEBUG,"SendBuf[%d] = %c\r\n", j, SendBuf[j]);//输出转化后的字符串数据包
 		}
 
 
-    if(!BC35_SendREVCMD(SendBuf,total_len, "OK"))				//收到‘OK’时可以发送数据
+    if(!BC35_SendREVCMD(SendBuf,total_len, "OK"))				//若发送数据成功则打印函数体内信息
     {
 			  UsartPrintf(USART_DEBUG,"*********BC35_SendREVCMD**********\r\n");
         DelayXms(500);
 			
-//		  BC35_SendREVCMD("AT+NSORF=1,100\r\n",16,"OK");
- //       Usart_SendString(USART2,"AT+NSORF=1,100\r\n",16);	//发送设备连接请求数据
-
- //       DelayXms(500);
-
         UsartPrintf(USART_DEBUG,"Send OK\r\n");
 
 
@@ -316,15 +313,15 @@ void BC35_SENDDATA(unsigned char *data, unsigned short len)
 
 unsigned char BC35_GetNSONMI(unsigned short timeOut)
 {
-	 char *req_length = NULL;
+	 char *req_lengthPot = NULL;
 	 char BC35_SendAT[100] = "AT+NSORF=1,";//单片机向BC35请求已从onenet接收到的数据
 	    do
     {
         if(BC35_WaitRecive() == REV_OK)								//如果接收完成
         {
             UsartPrintf(USART_DEBUG,(char *)BC35_buf);
-            req_length = strstr((char *)BC35_buf, ",");
-            if(req_length == NULL)											//如果没找到，可能是IPDATA头的延迟，还是需要等待一会，但不会超过设定的时间
+            req_lengthPot = strstr((char *)BC35_buf, ",");
+            if(req_lengthPot == NULL)											//如果没找到，可能是IPDATA头的延迟，还是需要等待一会，但不会超过设定的时间
             {
                 UsartPrintf(USART_DEBUG, "\"IPD\" not found\r\n");
             }
@@ -332,12 +329,16 @@ unsigned char BC35_GetNSONMI(unsigned short timeOut)
             {
                 UsartPrintf(USART_DEBUG, "收到返回数据\r\n");
 
-                req_length++;
-                UsartPrintf(USART_DEBUG, "接收的数据量%s\r\n",req_length);
-							  strcat(BC35_SendAT,req_length);
+                req_lengthPot++;
+                UsartPrintf(USART_DEBUG, "接收的数据量%s\r\n",req_lengthPot);
+							  strcat(BC35_SendAT,req_lengthPot);
 							  
                 UsartPrintf(USART_DEBUG,BC35_SendAT);
-								BC35_SendRevCmd(BC35_SendAT,"1"); 
+							
+							  BC35_Clear();
+                Usart_SendString(USART2, (unsigned char *)BC35_SendAT, strlen((const char *)BC35_SendAT));	
+                DelayXms(200);
+							
 							  return 1;
                 
 

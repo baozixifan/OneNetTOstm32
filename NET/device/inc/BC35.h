@@ -21,7 +21,7 @@ unsigned char *BC35_GetDATA(unsigned short timeOut);
 
 unsigned char BC35_GetNSONMI(unsigned short timeOut);
 
-_Bool BC35_SendRevCmd(char *cmd, char *res);
+//_Bool BC35_SendRevCmd(char *cmd, char *res);
 
 _Bool BC35_SendREVCMD(char *cmd,unsigned short len,char *res);
 

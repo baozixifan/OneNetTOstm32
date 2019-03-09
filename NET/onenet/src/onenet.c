@@ -50,23 +50,23 @@
 
 extern unsigned char BC35_buf[128];
 
-u8 http_len=0;
-void hextostr(uint8 *pkt,uint8 *data,uint32 len)
-{
-    u8 i;
-    *pkt = 0;
-    for(i=0;i<len;i++)
-    {
-        if(data[i]/16<10)
-            pkt[2*i]=data[i]/16+0x30;
-        else
-            pkt[2*i]=data[i]/16+0x37;
-        if(data[i]%16<10)
-            pkt[2*i+1]=data[i]%16+0x30;
-        else
-            pkt[2*i+1]=data[i]%16+0x37;
-    }
-}
+//u8 http_len=0;
+//void hextostr(uint8 *pkt,uint8 *data,uint32 len)
+//{
+//    u8 i;
+//    *pkt = 0;
+//    for(i=0;i<len;i++)
+//    {
+//        if(data[i]/16<10)
+//            pkt[2*i]=data[i]/16+0x30;
+//        else
+//            pkt[2*i]=data[i]/16+0x37;
+//        if(data[i]%16<10)
+//            pkt[2*i+1]=data[i]%16+0x30;
+//        else
+//            pkt[2*i+1]=data[i]%16+0x37;
+//    }
+//}
 //==========================================================
 //	函数名称：	OneNet_DevLink
 //
@@ -118,24 +118,22 @@ _Bool OneNet_DevLink(void)
 				
         if(mqttRevdatahex!= NULL)
         {
-  
-         //   status = 0;
-           			
-            			if(MQTT_UnPacketRecv(mqttRevdatahex) == MQTT_PKT_CONNACK)
-            			{
-            				switch(MQTT_UnPacketConnectAck(mqttRevdatahex))
-            				{
-            					case 0:UsartPrintf(USART_DEBUG, "Tips:	连接成功\r\n");status = 0;break;
-											
-            					case 1:UsartPrintf(USART_DEBUG, "WARN:	连接失败：协议错误\r\n");break;
-            					case 2:UsartPrintf(USART_DEBUG, "WARN:	连接失败：非法的clientid\r\n");break;
-            					case 3:UsartPrintf(USART_DEBUG, "WARN:	连接失败：服务器失败\r\n");break;
-            					case 4:UsartPrintf(USART_DEBUG, "WARN:	连接失败：用户名或密码错误\r\n");break;
-            					case 5:UsartPrintf(USART_DEBUG, "WARN:	连接失败：非法链接(比如token非法)\r\n");break;
-            					
-											default:UsartPrintf(USART_DEBUG, "ERR:	连接失败：未知错误\r\n");break;
-            				}
-            			}
+          			
+						if(MQTT_UnPacketRecv(mqttRevdatahex) == MQTT_PKT_CONNACK)
+						{
+							switch(MQTT_UnPacketConnectAck(mqttRevdatahex))
+							{
+								case 0:UsartPrintf(USART_DEBUG, "Tips:	连接成功\r\n");status = 0;break;
+								
+								case 1:UsartPrintf(USART_DEBUG, "WARN:	连接失败：协议错误\r\n");break;
+								case 2:UsartPrintf(USART_DEBUG, "WARN:	连接失败：非法的clientid\r\n");break;
+								case 3:UsartPrintf(USART_DEBUG, "WARN:	连接失败：服务器失败\r\n");break;
+								case 4:UsartPrintf(USART_DEBUG, "WARN:	连接失败：用户名或密码错误\r\n");break;
+								case 5:UsartPrintf(USART_DEBUG, "WARN:	连接失败：非法链接(比如token非法)\r\n");break;
+								
+								default:UsartPrintf(USART_DEBUG, "ERR:	连接失败：未知错误\r\n");break;
+							}
+						}
         }
 
         MQTT_DeleteBuffer(&mqttPacket);								//删包
@@ -147,6 +145,8 @@ _Bool OneNet_DevLink(void)
     return status;
 
 }
+
+
 
 unsigned char OneNet_FillBuf(char *buf)
 {
