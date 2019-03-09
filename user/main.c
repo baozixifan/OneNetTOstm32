@@ -130,6 +130,8 @@ int main(void)
 //        }		
 			if(BC35_GetNSONMI(250))
 			{
+	
+
 				
 				UsartPrintf(USART_DEBUG, "+++++++++++++++++++++++++++*******");
         dataPtr = BC35_GetDATA(250);
