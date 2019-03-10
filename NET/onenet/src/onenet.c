@@ -47,26 +47,40 @@
 
 #define DEVID		"508860545"
 
+char heart_beat = 0;
+extern unsigned char BC35_buf[200];
 
-extern unsigned char BC35_buf[128];
+//==========================================================
+//	函数名称：	OneNET_SendData_Heart
+//
+//	函数功能：	心跳检测
+//
+//	入口参数：	无
+//
+//	返回参数：	SEND_TYPE_OK-发送成功	SEND_TYPE_DATA-需要重送
+//
+//	说明：		
+//==========================================================
+unsigned char OneNET_SendData_Heart(void)
+{
+	
+	MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0};					//协议包
+	
+	
+	if(MQTT_PacketPing(&mqttPacket))
+		return 1;
+	
+	heart_beat = 0;
+	
+	//NET_DEVICE_SendData(mqttPacket._data, mqttPacket._len);			//向平台上传心跳请求
+	NET_DEVICE_AddDataSendList(mqttPacket._data, mqttPacket._len, 0);	//加入链表
+	
+	MQTT_DeleteBuffer(&mqttPacket);										//删包
+	
+	return SEND_TYPE_OK;
 
-//u8 http_len=0;
-//void hextostr(uint8 *pkt,uint8 *data,uint32 len)
-//{
-//    u8 i;
-//    *pkt = 0;
-//    for(i=0;i<len;i++)
-//    {
-//        if(data[i]/16<10)
-//            pkt[2*i]=data[i]/16+0x30;
-//        else
-//            pkt[2*i]=data[i]/16+0x37;
-//        if(data[i]%16<10)
-//            pkt[2*i+1]=data[i]%16+0x30;
-//        else
-//            pkt[2*i+1]=data[i]%16+0x37;
-//    }
-//}
+}
+
 //==========================================================
 //	函数名称：	OneNet_DevLink
 //
