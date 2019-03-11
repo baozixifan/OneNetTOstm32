@@ -243,10 +243,10 @@ void BC35_SENDDATA(unsigned char *data, unsigned short len)
 		
 		//字符数组转化为字符串
 		
-//				for (int j = 0; j < total_len; j++)
-//		{
-//			UsartPrintf(USART_DEBUG,"SendBuf[%d] = %c\r\n", j, SendBuf[j]);//输出转化后的字符串数据包
-//		}
+				for (int j = 0; j < total_len; j++)
+		{
+			UsartPrintf(USART_DEBUG,"SendBuf[%d] = %c\r\n", j, SendBuf[j]);//输出转化后的字符串数据包
+		}
 
 
     if(!BC35_SendREVCMD(SendBuf,total_len, "OK"))				//若发送数据成功则打印函数体内信息

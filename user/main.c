@@ -33,12 +33,13 @@
 #include "beep.h"
 #include "adxl362.h"
 #include "DHT11.h"
+#include "hwtimer.h"
 //C库
 #include <string.h>
 #include "HEXSTR.h"
 #include "MQTTData.h"
 
-
+extern volatile unsigned char timer3out;
 
 /*
 ************************************************************
@@ -66,7 +67,10 @@ void Hardware_Init(void)
 
     //ADXL362_Init();					//三轴加速计初始化 NO USE
     DHT11_Init ();
+	
     Beep_Init();					//蜂鸣器初始化
+	
+	  TIM3_Int_Init(4999,7199);//定时器初始化，10Khz的计数频率，计数到5000为500ms
 
     UsartPrintf(USART_DEBUG, " Hardware init OK\r\n");
 
@@ -100,6 +104,8 @@ int main(void)
 
     unsigned char *dataPtr = NULL;
 	
+	  unsigned char timecount = 0;
+	
 //	  unsigned char mqttPacketdataHEX[200];//转为16进制数组后，数组的缓存
 	
 	  unsigned char mqttRevdatahex[200];//接受的字符串转化为16进制数组
@@ -114,9 +120,31 @@ int main(void)
     Beep_Set(BEEP_ON);				//鸣叫提示接入成功
     DelayXms(250);
     Beep_Set(BEEP_OFF);
+		
+		OneNET_SendData_Heart();
 
     while(1)
     {
+			
+			
+			if(timer3out == 1)
+			{
+				timer3out = 0;
+				timecount++;
+				if(OneNet_Check_Heart())
+				{
+					DelayXms(500);
+					UsartPrintf(USART_DEBUG, "OneNET_SendData_Heart_false");
+				}
+				if(timecount >= 20)
+				{
+					timecount = 0;
+					OneNET_SendData_Heart();
+					
+				}
+				
+				
+			}
 
 //        if(++timeCount >= 500)									//发送间隔5s
 //        {
@@ -128,7 +156,7 @@ int main(void)
 //            timeCount = 0;
 //            BC35_Clear();
 //        }		
-			if(BC35_GetNSONMI(250))
+			if(BC35_GetNSONMI(50))
 			{
 				
 				UsartPrintf(USART_DEBUG, "+++++++++++++++++++++++++++*******");
@@ -141,8 +169,11 @@ int main(void)
             OneNet_RevPro(mqttRevdatahex);				
 				    ClearRAM((u8*)mqttRevdatahex,200);         //删包
 				
+				TIM_Cmd(TIM3, ENABLE);  //使能TIMx外设
 			}
         DelayXms(10);
+			
+			
 	
     }
 
