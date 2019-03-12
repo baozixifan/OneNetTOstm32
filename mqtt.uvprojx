@@ -462,6 +462,11 @@
               <FileType>1</FileType>
               <FilePath>.\fwlib\src\stm32f10x_spi.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f10x_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\fwlib\src\stm32f10x_tim.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -501,6 +506,11 @@
               <FileName>oled.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\hardware\src\oled.c</FilePath>
+            </File>
+            <File>
+              <FileName>hwtimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\hardware\src\hwtimer.c</FilePath>
             </File>
           </Files>
         </Group>
