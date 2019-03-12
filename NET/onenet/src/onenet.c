@@ -113,14 +113,14 @@ _Bool OneNet_Check_Heart(void)
 		return 0;
 	}
 	
-	if(++runCount >= 40)
+	if(++runCount >= 40)           //心跳停止累计40个周期
 	{
 		runCount = 0;
 		
 		UsartPrintf(USART_DEBUG, "HeartBeat TimeOut: %d\r\n", errCount);
-		OneNET_SendData_Heart();		//发送心跳请求
+		OneNET_SendData_Heart();		//再次发送心跳请求
 		
-		if(++errCount >= 3)
+		if(++errCount >= 3)         //心跳停止重发累计3次
 		{
 			unsigned char errType = 0;
 			

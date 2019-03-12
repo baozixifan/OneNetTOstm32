@@ -39,7 +39,7 @@
 #include "HEXSTR.h"
 #include "MQTTData.h"
 
-extern volatile unsigned char timer3out;
+extern volatile unsigned char timer3out; //心跳检测中断标志位
 
 /*
 ************************************************************
@@ -129,21 +129,18 @@ int main(void)
 			
 			if(timer3out == 1)
 			{
-				timer3out = 0;
-				timecount++;
+				timer3out = 0;     //清除心跳检测中断标志位
+				timecount++;       //心跳发送标志位自增
 				if(OneNet_Check_Heart())
 				{
-					DelayXms(500);
+					//心跳停止
 					UsartPrintf(USART_DEBUG, "OneNET_SendData_Heart_false");
 				}
 				if(timecount >= 20)
 				{
 					timecount = 0;
-					OneNET_SendData_Heart();
-					
-				}
-				
-				
+					OneNET_SendData_Heart();				
+				}						
 			}
 
 //        if(++timeCount >= 500)									//发送间隔5s
