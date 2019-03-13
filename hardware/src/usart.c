@@ -2,27 +2,27 @@
 	************************************************************
 	************************************************************
 	************************************************************
-	*	ÎÄ¼şÃû£º 	usart.c
+	*	æ–‡ä»¶åï¼š 	usart.c
 	*
-        *	×÷Õß£º 		leigong
+        *	ä½œè€…ï¼š 		leigong
 	*
-	*	ÈÕÆÚ£º 		2016-11-23
+	*	æ—¥æœŸï¼š 		2016-11-23
 	*
-	*	°æ±¾£º 		V1.0
+	*	ç‰ˆæœ¬ï¼š 		V1.0
 	*
-	*	ËµÃ÷£º 		µ¥Æ¬»ú´®¿ÚÍâÉè³õÊ¼»¯£¬¸ñÊ½»¯´òÓ¡
+	*	è¯´æ˜ï¼š 		å•ç‰‡æœºä¸²å£å¤–è®¾åˆå§‹åŒ–ï¼Œæ ¼å¼åŒ–æ‰“å°
 	*
-	*	ĞŞ¸Ä¼ÇÂ¼£º	
+	*	ä¿®æ”¹è®°å½•ï¼š	
 	************************************************************
 	************************************************************
 	************************************************************
 **/
 
-//Ó²¼şÇı¶¯
+//ç¡¬ä»¶é©±åŠ¨
 #include "usart.h"
 #include "delay.h"
 
-//C¿â
+//Cåº“
 #include <stdarg.h>
 #include <string.h>
 #include <stdio.h>
@@ -30,15 +30,15 @@
 
 /*
 ************************************************************
-*	º¯ÊıÃû³Æ£º	Usart1_Init
+*	å‡½æ•°åç§°ï¼š	Usart1_Init
 *
-*	º¯Êı¹¦ÄÜ£º	´®¿Ú1³õÊ¼»¯
+*	å‡½æ•°åŠŸèƒ½ï¼š	ä¸²å£1åˆå§‹åŒ–
 *
-*	Èë¿Ú²ÎÊı£º	baud£ºÉè¶¨µÄ²¨ÌØÂÊ
+*	å…¥å£å‚æ•°ï¼š	baudï¼šè®¾å®šçš„æ³¢ç‰¹ç‡
 *
-*	·µ»Ø²ÎÊı£º	ÎŞ
+*	è¿”å›å‚æ•°ï¼š	æ— 
 *
-*	ËµÃ÷£º		TX-PA9		RX-PA10
+*	è¯´æ˜ï¼š		TX-PA9		RX-PA10
 ************************************************************
 */
 void Usart1_Init(unsigned int baud)
@@ -64,16 +64,16 @@ void Usart1_Init(unsigned int baud)
     GPIO_Init(GPIOA, &gpio_initstruct);
 
     usart_initstruct.USART_BaudRate = baud;
-    usart_initstruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None;		//ÎŞÓ²¼şÁ÷¿Ø
-    usart_initstruct.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;						//½ÓÊÕºÍ·¢ËÍ
-    usart_initstruct.USART_Parity = USART_Parity_No;									//ÎŞĞ£Ñé
-    usart_initstruct.USART_StopBits = USART_StopBits_1;								//1Î»Í£Ö¹Î»
-    usart_initstruct.USART_WordLength = USART_WordLength_8b;							//8Î»Êı¾İÎ»
+    usart_initstruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None;		//æ— ç¡¬ä»¶æµæ§
+    usart_initstruct.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;						//æ¥æ”¶å’Œå‘é€
+    usart_initstruct.USART_Parity = USART_Parity_No;									//æ— æ ¡éªŒ
+    usart_initstruct.USART_StopBits = USART_StopBits_1;								//1ä½åœæ­¢ä½
+    usart_initstruct.USART_WordLength = USART_WordLength_8b;							//8ä½æ•°æ®ä½
     USART_Init(USART1, &usart_initstruct);
 
-    USART_Cmd(USART1, ENABLE);														//Ê¹ÄÜ´®¿Ú
+    USART_Cmd(USART1, ENABLE);														//ä½¿èƒ½ä¸²å£
 
-    USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);									//Ê¹ÄÜ½ÓÊÕÖĞ¶Ï
+    USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);									//ä½¿èƒ½æ¥æ”¶ä¸­æ–­
 
     nvic_initstruct.NVIC_IRQChannel = USART1_IRQn;
     nvic_initstruct.NVIC_IRQChannelCmd = ENABLE;
@@ -85,15 +85,15 @@ void Usart1_Init(unsigned int baud)
 
 /*
 ************************************************************
-*	º¯ÊıÃû³Æ£º	Usart2_Init
+*	å‡½æ•°åç§°ï¼š	Usart2_Init
 *
-*	º¯Êı¹¦ÄÜ£º	´®¿Ú2³õÊ¼»¯
+*	å‡½æ•°åŠŸèƒ½ï¼š	ä¸²å£2åˆå§‹åŒ–
 *
-*	Èë¿Ú²ÎÊı£º	baud£ºÉè¶¨µÄ²¨ÌØÂÊ
+*	å…¥å£å‚æ•°ï¼š	baudï¼šè®¾å®šçš„æ³¢ç‰¹ç‡
 *
-*	·µ»Ø²ÎÊı£º	ÎŞ
+*	è¿”å›å‚æ•°ï¼š	æ— 
 *
-*	ËµÃ÷£º		TX-PA2		RX-PA3
+*	è¯´æ˜ï¼š		TX-PA2		RX-PA3
 ************************************************************
 */
 void Usart2_Init(unsigned int baud)
@@ -119,16 +119,16 @@ void Usart2_Init(unsigned int baud)
     GPIO_Init(GPIOA, &gpio_initstruct);
 
     usart_initstruct.USART_BaudRate = baud;
-    usart_initstruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None;		//ÎŞÓ²¼şÁ÷¿Ø
-    usart_initstruct.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;						//½ÓÊÕºÍ·¢ËÍ
-    usart_initstruct.USART_Parity = USART_Parity_No;									//ÎŞĞ£Ñé
-    usart_initstruct.USART_StopBits = USART_StopBits_1;								//1Î»Í£Ö¹Î»
-    usart_initstruct.USART_WordLength = USART_WordLength_8b;							//8Î»Êı¾İÎ»
+    usart_initstruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None;		//æ— ç¡¬ä»¶æµæ§
+    usart_initstruct.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;						//æ¥æ”¶å’Œå‘é€
+    usart_initstruct.USART_Parity = USART_Parity_No;									//æ— æ ¡éªŒ
+    usart_initstruct.USART_StopBits = USART_StopBits_1;								//1ä½åœæ­¢ä½
+    usart_initstruct.USART_WordLength = USART_WordLength_8b;							//8ä½æ•°æ®ä½
     USART_Init(USART2, &usart_initstruct);
 
-    USART_Cmd(USART2, ENABLE);														//Ê¹ÄÜ´®¿Ú
+    USART_Cmd(USART2, ENABLE);														//ä½¿èƒ½ä¸²å£
 
-    USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);									//Ê¹ÄÜ½ÓÊÕÖĞ¶Ï
+    USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);									//ä½¿èƒ½æ¥æ”¶ä¸­æ–­
 
     nvic_initstruct.NVIC_IRQChannel = USART2_IRQn;
     nvic_initstruct.NVIC_IRQChannelCmd = ENABLE;
@@ -140,17 +140,17 @@ void Usart2_Init(unsigned int baud)
 
 /*
 ************************************************************
-*	º¯ÊıÃû³Æ£º	Usart_SendString
+*	å‡½æ•°åç§°ï¼š	Usart_SendString
 *
-*	º¯Êı¹¦ÄÜ£º	´®¿ÚÊı¾İ·¢ËÍ
+*	å‡½æ•°åŠŸèƒ½ï¼š	ä¸²å£æ•°æ®å‘é€
 *
-*	Èë¿Ú²ÎÊı£º	USARTx£º´®¿Ú×é
-*				str£ºÒª·¢ËÍµÄÊı¾İ
-*				len£ºÊı¾İ³¤¶È
+*	å…¥å£å‚æ•°ï¼š	USARTxï¼šä¸²å£ç»„
+*				strï¼šè¦å‘é€çš„æ•°æ®
+*				lenï¼šæ•°æ®é•¿åº¦
 *
-*	·µ»Ø²ÎÊı£º	ÎŞ
+*	è¿”å›å‚æ•°ï¼š	æ— 
 *
-*	ËµÃ÷£º		
+*	è¯´æ˜ï¼š		
 ************************************************************
 */
 void Usart_SendString(USART_TypeDef *USARTx, unsigned char *str, unsigned short len)
@@ -160,24 +160,24 @@ void Usart_SendString(USART_TypeDef *USARTx, unsigned char *str, unsigned short 
 
     for(; count < len; count++)
     {
-        USART_SendData(USARTx, *str++);									//·¢ËÍÊı¾İ
-        while(USART_GetFlagStatus(USARTx, USART_FLAG_TC) == RESET);		//µÈ´ı·¢ËÍÍê³É
+        USART_SendData(USARTx, *str++);									//å‘é€æ•°æ®
+        while(USART_GetFlagStatus(USARTx, USART_FLAG_TC) == RESET);		//ç­‰å¾…å‘é€å®Œæˆ
     }
 
 }
 
 /*
 ************************************************************
-*	º¯ÊıÃû³Æ£º	UsartPrintf
+*	å‡½æ•°åç§°ï¼š	UsartPrintf
 *
-*	º¯Êı¹¦ÄÜ£º	¸ñÊ½»¯´òÓ¡
+*	å‡½æ•°åŠŸèƒ½ï¼š	æ ¼å¼åŒ–æ‰“å°
 *
-*	Èë¿Ú²ÎÊı£º	USARTx£º´®¿Ú×é
-*				fmt£º²»¶¨³¤²Î
+*	å…¥å£å‚æ•°ï¼š	USARTxï¼šä¸²å£ç»„
+*				fmtï¼šä¸å®šé•¿å‚
 *
-*	·µ»Ø²ÎÊı£º	ÎŞ
+*	è¿”å›å‚æ•°ï¼š	æ— 
 *
-*	ËµÃ÷£º		
+*	è¯´æ˜ï¼š		
 ************************************************************
 */
 void UsartPrintf(USART_TypeDef *USARTx, char *fmt,...)
@@ -188,7 +188,7 @@ void UsartPrintf(USART_TypeDef *USARTx, char *fmt,...)
     unsigned char *pStr = UsartPrintfBuf;
 
     va_start(ap, fmt);
-    vsnprintf((char *)UsartPrintfBuf, sizeof(UsartPrintfBuf), fmt, ap);							//¸ñÊ½»¯
+    vsnprintf((char *)UsartPrintfBuf, sizeof(UsartPrintfBuf), fmt, ap);							//æ ¼å¼åŒ–
     va_end(ap);
 
     while(*pStr != 0)
@@ -201,21 +201,21 @@ void UsartPrintf(USART_TypeDef *USARTx, char *fmt,...)
 
 /*
 ************************************************************
-*	º¯ÊıÃû³Æ£º	USART1_IRQHandler
+*	å‡½æ•°åç§°ï¼š	USART1_IRQHandler
 *
-*	º¯Êı¹¦ÄÜ£º	´®¿Ú1ÊÕ·¢ÖĞ¶Ï
+*	å‡½æ•°åŠŸèƒ½ï¼š	ä¸²å£1æ”¶å‘ä¸­æ–­
 *
-*	Èë¿Ú²ÎÊı£º	ÎŞ
+*	å…¥å£å‚æ•°ï¼š	æ— 
 *
-*	·µ»Ø²ÎÊı£º	ÎŞ
+*	è¿”å›å‚æ•°ï¼š	æ— 
 *
-*	ËµÃ÷£º		
+*	è¯´æ˜ï¼š		
 ************************************************************
 */
 void USART1_IRQHandler(void)
 {
 
-    if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) //½ÓÊÕÖĞ¶Ï
+    if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) //æ¥æ”¶ä¸­æ–­
     {
         USART_ClearFlag(USART1, USART_FLAG_RXNE);
     }

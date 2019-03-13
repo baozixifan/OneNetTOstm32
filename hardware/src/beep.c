@@ -2,26 +2,26 @@
 	************************************************************
 	************************************************************
 	************************************************************
-	*	ÎÄ¼şÃû£º 	led.c
+	*	æ–‡ä»¶åï¼š 	led.c
 	*
-        *	×÷Õß£º 		leigong
+        *	ä½œè€…ï¼š 		leigong
 	*
-	*	ÈÕÆÚ£º 		2016-11-23
+	*	æ—¥æœŸï¼š 		2016-11-23
 	*
-	*	°æ±¾£º 		V1.0
+	*	ç‰ˆæœ¬ï¼š 		V1.0
 	*
-	*	ËµÃ÷£º 		BEEP³õÊ¼»¯¡¢¿ØÖÆ
+	*	è¯´æ˜ï¼š 		BEEPåˆå§‹åŒ–ã€æ§åˆ¶
 	*
-	*	ĞŞ¸Ä¼ÇÂ¼£º	
+	*	ä¿®æ”¹è®°å½•ï¼š	
 	************************************************************
 	************************************************************
 	************************************************************
 **/
 
-//µ¥Æ¬»úÍ·ÎÄ¼ş
+//å•ç‰‡æœºå¤´æ–‡ä»¶
 #include "stm32f10x.h"
 
-//Ó²¼şÇı¶¯
+//ç¡¬ä»¶é©±åŠ¨
 #include "beep.h"
 
 
@@ -30,15 +30,15 @@ BEEP_INFO beep_info = {0};
 
 /*
 ************************************************************
-*	º¯ÊıÃû³Æ£º	Beep_Init
+*	å‡½æ•°åç§°ï¼š	Beep_Init
 *
-*	º¯Êı¹¦ÄÜ£º	·äÃùÆ÷³õÊ¼»¯
+*	å‡½æ•°åŠŸèƒ½ï¼š	èœ‚é¸£å™¨åˆå§‹åŒ–
 *
-*	Èë¿Ú²ÎÊı£º	ÎŞ
+*	å…¥å£å‚æ•°ï¼š	æ— 
 *
-*	·µ»Ø²ÎÊı£º	ÎŞ
+*	è¿”å›å‚æ•°ï¼š	æ— 
 *
-*	ËµÃ÷£º		
+*	è¯´æ˜ï¼š		
 ************************************************************
 */
 void Beep_Init(void)
@@ -46,38 +46,38 @@ void Beep_Init(void)
 
     GPIO_InitTypeDef gpio_initstruct;
 
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);		//´ò¿ªGPIOBµÄÊ±ÖÓ
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);		//æ‰“å¼€GPIOBçš„æ—¶é’Ÿ
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-    GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);	//½ûÖ¹JTAG¹¦ÄÜ
+    GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);	//ç¦æ­¢JTAGåŠŸèƒ½
 
-    gpio_initstruct.GPIO_Mode = GPIO_Mode_Out_PP;				//ÉèÖÃÎªÊä³ö
-    gpio_initstruct.GPIO_Pin = GPIO_Pin_3;						//½«³õÊ¼»¯µÄPin½Å
-    gpio_initstruct.GPIO_Speed = GPIO_Speed_50MHz;				//¿É³ĞÔØµÄ×î´óÆµÂÊ
+    gpio_initstruct.GPIO_Mode = GPIO_Mode_Out_PP;				//è®¾ç½®ä¸ºè¾“å‡º
+    gpio_initstruct.GPIO_Pin = GPIO_Pin_3;						//å°†åˆå§‹åŒ–çš„Pinè„š
+    gpio_initstruct.GPIO_Speed = GPIO_Speed_50MHz;				//å¯æ‰¿è½½çš„æœ€å¤§é¢‘ç‡
 
-    GPIO_Init(GPIOB, &gpio_initstruct);							//³õÊ¼»¯GPIO
+    GPIO_Init(GPIOB, &gpio_initstruct);							//åˆå§‹åŒ–GPIO
 
-    Beep_Set(BEEP_OFF);											//³õÊ¼»¯Íê³Éºó£¬¹Ø±Õ·äÃùÆ÷
+    Beep_Set(BEEP_OFF);											//åˆå§‹åŒ–å®Œæˆåï¼Œå…³é—­èœ‚é¸£å™¨
 
 }
 
 /*
 ************************************************************
-*	º¯ÊıÃû³Æ£º	Beep_Set
+*	å‡½æ•°åç§°ï¼š	Beep_Set
 *
-*	º¯Êı¹¦ÄÜ£º	·äÃùÆ÷¿ØÖÆ
+*	å‡½æ•°åŠŸèƒ½ï¼š	èœ‚é¸£å™¨æ§åˆ¶
 *
-*	Èë¿Ú²ÎÊı£º	status£º¿ª¹Ø·äÃùÆ÷
+*	å…¥å£å‚æ•°ï¼š	statusï¼šå¼€å…³èœ‚é¸£å™¨
 *
-*	·µ»Ø²ÎÊı£º	ÎŞ
+*	è¿”å›å‚æ•°ï¼š	æ— 
 *
-*	ËµÃ÷£º		¿ª-BEEP_ON		¹Ø-BEEP_OFF
+*	è¯´æ˜ï¼š		å¼€-BEEP_ON		å…³-BEEP_OFF
 ************************************************************
 */
 void Beep_Set(_Bool status)
 {
 
-    GPIO_WriteBit(GPIOB, GPIO_Pin_3, status == BEEP_ON ? Bit_SET : Bit_RESET);		//Èç¹ûstatusµÈÓÚBEEP_ON£¬Ôò·µ»ØBit_SET£¬·ñÔò·µ»ØBit_RESET
+    GPIO_WriteBit(GPIOB, GPIO_Pin_3, status == BEEP_ON ? Bit_SET : Bit_RESET);		//å¦‚æœstatusç­‰äºBEEP_ONï¼Œåˆ™è¿”å›Bit_SETï¼Œå¦åˆ™è¿”å›Bit_RESET
 
     beep_info.Beep_Status = status;
 

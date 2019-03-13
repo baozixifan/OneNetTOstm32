@@ -2,34 +2,34 @@
 	************************************************************
 	************************************************************
 	************************************************************
-	*	�ļ����� 	hwtimer.c
+	*	文件名： 	hwtimer.c
 	*
-	*	���ߣ� 		�ż���
+	*	作者： 		张继瑞
 	*
-	*	���ڣ� 		2016-11-23
+	*	日期： 		2016-11-23
 	*
-	*	�汾�� 		V1.0
+	*	版本： 		V1.0
 	*
-	*	˵���� 		��Ƭ����ʱ����ʼ��
+	*	说明： 		单片机定时器初始化
 	*
-	*	�޸ļ�¼��	
+	*	修改记录：	
 	************************************************************
 	************************************************************
 	************************************************************
 **/
 
-//Э���
+//协议层
 #include "onenet.h"
 
-//�����豸
+//网络设备
 #include "BC35.h"
 
-//Ӳ������
+//硬件驱动
 #include "hwtimer.h"
 
 #include "stm32f10x.h"
 
-unsigned short timerCount = 0;	//ʱ�����--��λ��
+unsigned short timerCount = 0;	//时间计数--单位秒
 
 
 TIM_INFO timInfo = {0};
@@ -39,17 +39,17 @@ volatile unsigned char timer3out = 0;
 
 /*
 ************************************************************
-*	�������ƣ�	Timer1_8_Init
+*	函数名称：	Timer1_8_Init
 *
-*	�������ܣ�	Timer1��8��PWM����
+*	函数功能：	Timer1或8的PWM配置
 *
-*	��ڲ�����	TIMx��TIM1 ���� TIM8
-*				arr������ֵ
-*				psc��Ƶֵ
+*	入口参数：	TIMx：TIM1 或者 TIM8
+*				arr：重载值
+*				psc分频值
 *
-*	���ز�����	��
+*	返回参数：	无
 *
-*	˵����		
+*	说明：		
 ************************************************************
 */
 void Timer1_8_Init(TIM_TypeDef * TIMx, unsigned short arr, unsigned short psc)
@@ -80,53 +80,53 @@ void Timer1_8_Init(TIM_TypeDef * TIMx, unsigned short arr, unsigned short psc)
 	timerInitStruct.TIM_Prescaler = psc;
 	TIM_TimeBaseInit(TIMx, &timerInitStruct);
 	
-	timerOCInitStruct.TIM_OCMode = TIM_OCMode_PWM2;				//ѡ��ʱ��ģʽ:TIM������ȵ���ģʽ2
- 	timerOCInitStruct.TIM_OutputState = TIM_OutputState_Enable; //�Ƚ����ʹ��
-	timerOCInitStruct.TIM_OCPolarity = TIM_OCPolarity_Low;		//�������:TIM����Ƚϼ��Ե�
+	timerOCInitStruct.TIM_OCMode = TIM_OCMode_PWM2;				//选择定时器模式:TIM脉冲宽度调制模式2
+ 	timerOCInitStruct.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
+	timerOCInitStruct.TIM_OCPolarity = TIM_OCPolarity_Low;		//输出极性:TIM输出比较极性低
 	timerOCInitStruct.TIM_Pulse = 0;
 	TIM_OC2Init(TIMx, &timerOCInitStruct);
 	TIM_OC3Init(TIMx, &timerOCInitStruct);
 	
-	TIM_CtrlPWMOutputs(TIMx, ENABLE);							//MOE �����ʹ��	
+	TIM_CtrlPWMOutputs(TIMx, ENABLE);							//MOE 主输出使能	
 	
-	TIM_OC2PreloadConfig(TIMx, TIM_OCPreload_Enable);			//ʹ��TIMx��CCR1�ϵ�Ԥװ�ؼĴ���
-	TIM_OC3PreloadConfig(TIMx, TIM_OCPreload_Enable);			//ʹ��TIMx��CCR1�ϵ�Ԥװ�ؼĴ���
+	TIM_OC2PreloadConfig(TIMx, TIM_OCPreload_Enable);			//使能TIMx在CCR1上的预装载寄存器
+	TIM_OC3PreloadConfig(TIMx, TIM_OCPreload_Enable);			//使能TIMx在CCR1上的预装载寄存器
  
-	TIM_ARRPreloadConfig(TIMx, ENABLE);							//ARPEʹ��
+	TIM_ARRPreloadConfig(TIMx, ENABLE);							//ARPE使能
 	
-	TIM_Cmd(TIMx, ENABLE);										//ʹ��TIMx
+	TIM_Cmd(TIMx, ENABLE);										//使能TIMx
 
 }
 
 
-//ͨ�ö�ʱ���жϳ�ʼ��
-//����ʱ��ѡ��ΪAPB1��2������APB1Ϊ36M
-//arr���Զ���װֵ��
-//psc��ʱ��Ԥ��Ƶ��
-//����ʹ�õ��Ƕ�ʱ��3!
+//通用定时器中断初始化
+//这里时钟选择为APB1的2倍，而APB1为36M
+//arr：自动重装值。
+//psc：时钟预分频数
+//这里使用的是定时器3!
 void TIM3_Int_Init(u16 arr,u16 psc)
 {
     TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE); //ʱ��ʹ��
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE); //时钟使能
 
-	TIM_TimeBaseStructure.TIM_Period = arr; //��������һ�������¼�װ�����Զ���װ�ؼĴ������ڵ�ֵ	 ������5000Ϊ500ms
-	TIM_TimeBaseStructure.TIM_Prescaler =psc; //����������ΪTIMxʱ��Ƶ�ʳ�����Ԥ��Ƶֵ  10Khz�ļ���Ƶ��  
-	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //����ʱ�ӷָ�:TDTS = Tck_tim
-	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM���ϼ���ģʽ
-	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); //����TIM_TimeBaseInitStruct��ָ���Ĳ�����ʼ��TIMx��ʱ�������λ
+	TIM_TimeBaseStructure.TIM_Period = arr; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+	TIM_TimeBaseStructure.TIM_Prescaler =psc; //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
  
-	TIM_ITConfig(  //ʹ�ܻ���ʧ��ָ����TIM�ж�
+	TIM_ITConfig(  //使能或者失能指定的TIM中断
 		TIM3, //TIM2
 		TIM_IT_Update ,
-		ENABLE  //ʹ��
+		ENABLE  //使能
 		);
-	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //TIM3�ж�
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //��ռ���ȼ�0��
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;  //�����ȼ�3��
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQͨ����ʹ��
-	NVIC_Init(&NVIC_InitStructure);  //����NVIC_InitStruct��ָ���Ĳ�����ʼ������NVIC�Ĵ���
+	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //TIM3中断
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;  //从优先级3级
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
+	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 
 	
 							 
@@ -136,15 +136,15 @@ void TIM3_Int_Init(u16 arr,u16 psc)
 
 /*
 ************************************************************
-*	�������ƣ�	TIM6_IRQHandler
+*	函数名称：	TIM6_IRQHandler
 *
-*	�������ܣ�	RTOS��������ʱ�ж�
+*	函数功能：	RTOS的心跳定时中断
 *
-*	��ڲ�����	��
+*	入口参数：	无
 *
-*	���ز�����	��
+*	返回参数：	无
 *
-*	˵����		
+*	说明：		
 ************************************************************
 */
 void TIM3_IRQHandler(void)
@@ -162,15 +162,15 @@ void TIM3_IRQHandler(void)
 
 /*
 ************************************************************
-*	�������ƣ�	TIM7_IRQHandler
+*	函数名称：	TIM7_IRQHandler
 *
-*	�������ܣ�	Timer7�����жϷ�����
+*	函数功能：	Timer7更新中断服务函数
 *
-*	��ڲ�����	��
+*	入口参数：	无
 *
-*	���ز�����	��
+*	返回参数：	无
 *
-*	˵����		
+*	说明：		
 ************************************************************
 */
 //void TIM7_IRQHandler(void)
@@ -178,20 +178,20 @@ void TIM3_IRQHandler(void)
 
 //	if(TIM_GetITStatus(TIM7, TIM_IT_Update) == SET)
 //	{
-//		if(oneNetInfo.netWork == 0)											//�������Ͽ�
+//		if(oneNetInfo.netWork == 0)											//如果网络断开
 //		{
-//			if(++timerCount >= NET_TIME) 									//�������Ͽ���ʱ
+//			if(++timerCount >= NET_TIME) 									//如果网络断开超时
 //			{	
-//				checkInfo.NET_DEVICE_OK = 0;								//���豸δ����־
+//				checkInfo.NET_DEVICE_OK = 0;								//置设备未检测标志
 //				
-//				NET_DEVICE_ReConfig(0);										//�豸��ʼ����������Ϊ��ʼ״̬
+//				NET_DEVICE_ReConfig(0);										//设备初始化步骤设置为开始状态
 //				
 //				oneNetInfo.netWork = 0;
 //			}
 //		}
 //		else
 //		{
-//			timerCount = 0;													//�������
+//			timerCount = 0;													//清除计数
 //		}
 //		
 //		TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
