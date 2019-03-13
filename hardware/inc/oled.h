@@ -3,9 +3,9 @@
 #include "stdlib.h"	    	
 #include "stm32f10x.h"
 
-//OLEDÄ£Ê½ÉèÖÃ
-//0:4Ïß´®ĞĞÄ£Ê½
-//1:²¢ĞĞ8080Ä£Ê½
+//OLEDæ¨¡å¼è®¾ç½®
+//0:4çº¿ä¸²è¡Œæ¨¡å¼
+//1:å¹¶è¡Œ8080æ¨¡å¼
 #define SIZE 16
 #define XLevelL		0x00
 #define XLevelH		0x10
@@ -16,7 +16,7 @@
 #define Y_WIDTH 	64	    
 
 
-//-----------------OLED¶Ë¿Ú¶¨Òå----------------  					   
+//-----------------OLEDç«¯å£å®šä¹‰----------------  					   
 
 
 #define OLED_SCLK_Clr() GPIO_ResetBits(GPIOA,GPIO_Pin_5)//CLK
@@ -34,11 +34,11 @@
 #define OLED_CS_Clr()  GPIO_ResetBits(GPIOB,GPIO_Pin_12)//CS
 #define OLED_CS_Set()  GPIO_SetBits(GPIOB,GPIO_Pin_12)
 
-#define OLED_CMD  0	//Ğ´ÃüÁî
-#define OLED_DATA 1	//Ğ´Êı¾İ
+#define OLED_CMD  0	//å†™å‘½ä»¤
+#define OLED_DATA 1	//å†™æ•°æ®
 
 
-//OLED¿ØÖÆÓÃº¯Êı
+//OLEDæ§åˆ¶ç”¨å‡½æ•°
 void OLED_WR_Byte(u8 dat,u8 cmd);	    
 void OLED_Display_On(void);
 void OLED_Display_Off(void);	   							   		    

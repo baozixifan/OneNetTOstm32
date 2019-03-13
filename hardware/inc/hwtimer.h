@@ -19,7 +19,7 @@ extern TIM_INFO timInfo;
 
 #define OS_TIMER	TIM6
 
-#define NET_TIME	60			//Éè¶¨Ê±¼ä--µ¥Î»Ãë
+#define NET_TIME	60			//è®¾å®šæ—¶é—´--å•ä½ç§’
 
 //extern unsigned short timerCount;
 

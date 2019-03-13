@@ -2,69 +2,69 @@
 	************************************************************
 	************************************************************
 	************************************************************
-	*	�ļ����� 	delay.c
+	*	文件名： 	delay.c
 	*
-        *	���ߣ� 		leigong
+        *	作者： 		leigong
 	*
-	*	���ڣ� 		2016-11-23
+	*	日期： 		2016-11-23
 	*
-	*	�汾�� 		V1.0
+	*	版本： 		V1.0
 	*
-	*	˵���� 		����systick������ʽ��ʱ
+	*	说明： 		利用systick做阻塞式延时
 	*
-	*	�޸ļ�¼��	
+	*	修改记录：	
 	************************************************************
 	************************************************************
 	************************************************************
 **/
 
-//��Ƭ��ͷ�ļ�
+//单片机头文件
 #include "stm32f10x.h"
 
-//delayͷ�ļ�
+//delay头文件
 #include "delay.h"
 
 
-//��ʱϵ��
+//延时系数
 unsigned char UsCount = 0;
 unsigned short MsCount = 0;
 
 
 /*
 ************************************************************
-*	�������ƣ�	Delay_Init
+*	函数名称：	Delay_Init
 *
-*	�������ܣ�	systick��ʼ��
+*	函数功能：	systick初始化
 *
-*	��ڲ�����	��
+*	入口参数：	无
 *
-*	���ز�����	��
+*	返回参数：	无
 *
-*	˵����		
+*	说明：		
 ************************************************************
 */
 void Delay_Init(void)
 {
 
-    SysTick->CTRL &= ~(1 << 2);		//ѡ��ʱ��ΪHCLK(72MHz)/8		103--9MHz
+    SysTick->CTRL &= ~(1 << 2);		//选择时钟为HCLK(72MHz)/8		103--9MHz
 
-    UsCount = 9;					//΢�뼶��ʱϵ��
+    UsCount = 9;					//微秒级延时系数
 
-    MsCount = UsCount * 1000;		//���뼶��ʱϵ��
+    MsCount = UsCount * 1000;		//毫秒级延时系数
 
 }
 
 /*
 ************************************************************
-*	�������ƣ�	DelayUs
+*	函数名称：	DelayUs
 *
-*	�������ܣ�	΢�뼶��ʱ
+*	函数功能：	微秒级延时
 *
-*	��ڲ�����	us����ʱ��ʱ��
+*	入口参数：	us：延时的时长
 *
-*	���ز�����	��
+*	返回参数：	无
 *
-*	˵����		��ʱ��(21MHz)�����ʱ798915us
+*	说明：		此时钟(21MHz)最大延时798915us
 ************************************************************
 */
 void DelayUs(unsigned short us)
@@ -72,34 +72,34 @@ void DelayUs(unsigned short us)
 
     unsigned int ctrlResult = 0;
 
-    us &= 0x00FFFFFF;											//ȡ��24λ
+    us &= 0x00FFFFFF;											//取低24位
 
-    SysTick->LOAD = us * UsCount;								//װ������
+    SysTick->LOAD = us * UsCount;								//装载数据
     SysTick->VAL = 0;
-    SysTick->CTRL = 1;											//ʹ�ܵ�������
+    SysTick->CTRL = 1;											//使能倒计数器
 
     do
     {
         ctrlResult = SysTick->CTRL;
     }
-    while((ctrlResult & 0x01) && !(ctrlResult & (1 << 16)));	//��֤�����С�����Ƿ񵹼�����0
+    while((ctrlResult & 0x01) && !(ctrlResult & (1 << 16)));	//保证在运行、检查是否倒计数到0
 
-    SysTick->CTRL = 0;											//�رյ�������
+    SysTick->CTRL = 0;											//关闭倒计数器
     SysTick->VAL = 0;
 
 }
 
 /*
 ************************************************************
-*	�������ƣ�	DelayXms
+*	函数名称：	DelayXms
 *
-*	�������ܣ�	���뼶��ʱ
+*	函数功能：	毫秒级延时
 *
-*	��ڲ�����	ms����ʱ��ʱ��
+*	入口参数：	ms：延时的时长
 *
-*	���ز�����	��
+*	返回参数：	无
 *
-*	˵����		
+*	说明：		
 ************************************************************
 */
 void DelayXms(unsigned short ms)
@@ -110,34 +110,34 @@ void DelayXms(unsigned short ms)
     if(ms == 0)
         return;
 
-    ms &= 0x00FFFFFF;											//ȡ��24λ
+    ms &= 0x00FFFFFF;											//取低24位
 
-    SysTick->LOAD = ms * MsCount;								//װ������
+    SysTick->LOAD = ms * MsCount;								//装载数据
     SysTick->VAL = 0;
-    SysTick->CTRL = 1;											//ʹ�ܵ�������
+    SysTick->CTRL = 1;											//使能倒计数器
 
     do
     {
         ctrlResult = SysTick->CTRL;
     }
-    while((ctrlResult & 0x01) && !(ctrlResult & (1 << 16)));	//��֤�����С�����Ƿ񵹼�����0
+    while((ctrlResult & 0x01) && !(ctrlResult & (1 << 16)));	//保证在运行、检查是否倒计数到0
 
-    SysTick->CTRL = 0;											//�رյ�������
+    SysTick->CTRL = 0;											//关闭倒计数器
     SysTick->VAL = 0;
 
 }
 
 /*
 ************************************************************
-*	�������ƣ�	DelayMs
+*	函数名称：	DelayMs
 *
-*	�������ܣ�	΢�뼶����ʱ
+*	函数功能：	微秒级长延时
 *
-*	��ڲ�����	ms����ʱ��ʱ��
+*	入口参数：	ms：延时的时长
 *
-*	���ز�����	��
+*	返回参数：	无
 *
-*	˵����		��ε���DelayXms����������ʱ
+*	说明：		多次调用DelayXms，做到长延时
 ************************************************************
 */
 void DelayMs(unsigned short ms)

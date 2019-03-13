@@ -43,16 +43,16 @@
 /******************************************************************************/
 /***************************** Include Files **********************************/
 /******************************************************************************/
-//µ¥Æ¬»ú
+//å•ç‰‡æœº
 #include "stm32f10x.h"
 
-//Ó²¼şÇı¶¯
+//ç¡¬ä»¶é©±åŠ¨
 #include "ADXL362.h"
 #include "spi.h"
 #include "usart.h"
 #include "delay.h"
 
-//C¿â
+//Cåº“
 #include <math.h>
 
 
@@ -97,7 +97,7 @@ unsigned char SPI_ADXL_Init(unsigned char lsbFirst,
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
     gpioInitStruct.GPIO_Pin = GPIO_Pin_4;
-    gpioInitStruct.GPIO_Mode = GPIO_Mode_Out_PP;					//ÍÆÍìÊä³ö
+    gpioInitStruct.GPIO_Mode = GPIO_Mode_Out_PP;					//æ¨æŒ½è¾“å‡º
     gpioInitStruct.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOA, &gpioInitStruct);
 
@@ -363,15 +363,15 @@ void ADXL362_GetXyz(short* x, short* y, short* z)
 
 /*
 ************************************************************
-*	º¯ÊıÃû³Æ£º	ADXL362_GetValue
+*	å‡½æ•°åç§°ï¼š	ADXL362_GetValue
 *
-*	º¯Êı¹¦ÄÜ£º	»ñÈ¡ADXL362µÄÊı¾İ
+*	å‡½æ•°åŠŸèƒ½ï¼š	è·å–ADXL362çš„æ•°æ®
 *
-*	Èë¿Ú²ÎÊı£º	ÎŞ
+*	å…¥å£å‚æ•°ï¼š	æ— 
 *
-*	·µ»Ø²ÎÊı£º	ÎŞ
+*	è¿”å›å‚æ•°ï¼š	æ— 
 *
-*	ËµÃ÷£º		
+*	è¯´æ˜ï¼š		
 ************************************************************
 */
 void ADXL362_GetValue(void)
@@ -379,16 +379,16 @@ void ADXL362_GetValue(void)
 
     short x_short = 0, y_short = 0, z_short = 0;
 
-    ADXL362_SetPowerMode(1);								//²âÁ¿Ä£Ê½
-    ADXL362_GetXyz(&x_short, &y_short, &z_short);			//»ñÈ¡Êı¾İ
+    ADXL362_SetPowerMode(1);								//æµ‹é‡æ¨¡å¼
+    ADXL362_GetXyz(&x_short, &y_short, &z_short);			//è·å–æ•°æ®
 
-    adxl362Info.x = (float)x_short * 0.001;					//ÊıÖµ×ª»»
+    adxl362Info.x = (float)x_short * 0.001;					//æ•°å€¼è½¬æ¢
     adxl362Info.y = (float)y_short * 0.001;
     adxl362Info.z = (float)z_short * 0.001;
 
-    adxl362Info.z_angle = atan(sqrt((x_short * x_short + y_short * y_short)) / z_short) * 57.29583;	//¼ÆËãZÖá½Ç¶È
+    adxl362Info.z_angle = atan(sqrt((x_short * x_short + y_short * y_short)) / z_short) * 57.29583;	//è®¡ç®—Zè½´è§’åº¦
 
-    ADXL362_SetPowerMode(0);								//´ı»úÄ£Ê½
+    ADXL362_SetPowerMode(0);								//å¾…æœºæ¨¡å¼
 
 }
 
