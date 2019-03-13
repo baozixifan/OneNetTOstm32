@@ -1,13 +1,13 @@
 #ifndef __MQTTData_H
 #define __MQTTData_H	 
-//µ¥Æ¬»úÍ·ÎÄ¼ş
+//å•ç‰‡æœºå¤´æ–‡ä»¶
 #include "stm32f10x.h"
 
-//Ó²¼şÇı¶¯
+//ç¡¬ä»¶é©±åŠ¨
 #include "delay.h"
 #include "usart.h"
 
-//C¿â
+//Cåº“
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

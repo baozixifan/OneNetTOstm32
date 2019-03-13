@@ -2,7 +2,7 @@
 #define _ONENET_H_
 
 
-#define SEND_TYPE_HEART			2	//ÐÄÌøÇëÇó
+#define SEND_TYPE_HEART			2	//å¿ƒè·³è¯·æ±‚
 
 
 _Bool OneNet_DevLink(void);

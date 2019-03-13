@@ -5,8 +5,8 @@
 
 
 
-#define REV_OK		0	//½ÓÊÕÍê³É±êÖ¾
-#define REV_WAIT	1	//½ÓÊÕÎ´Íê³É±êÖ¾
+#define REV_OK		0	//æ¥æ”¶å®Œæˆæ ‡å¿—
+#define REV_WAIT	1	//æ¥æ”¶æœªå®Œæˆæ ‡å¿—
 
 
 void BC35_Init(void);

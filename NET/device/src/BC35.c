@@ -2,33 +2,33 @@
 	************************************************************
 	************************************************************
 	************************************************************
-	*	ÎÄ¼şÃû£º 	BC35.c
+	*	æ–‡ä»¶åï¼š 	BC35.c
 	*
-        *	×÷Õß£º 		leigong
+        *	ä½œè€…ï¼š 		leigong
 	*
-	*	ÈÕÆÚ£º 		2017-10-20
+	*	æ—¥æœŸï¼š 		2017-10-20
 	*
-	*	°æ±¾£º 		V1.0
+	*	ç‰ˆæœ¬ï¼š 		V1.0
 	*
-	*	ËµÃ÷£º 		BC35Çı¶¯
+	*	è¯´æ˜ï¼š 		BC35é©±åŠ¨
 	*
-	*	ĞŞ¸Ä¼ÇÂ¼£º	
+	*	ä¿®æ”¹è®°å½•ï¼š	
 	************************************************************
 	************************************************************
 	************************************************************
 **/
 
-//µ¥Æ¬»úÍ·ÎÄ¼ş
+//å•ç‰‡æœºå¤´æ–‡ä»¶
 #include "stm32f10x.h"
 
-//ÍøÂçÉè±¸Çı¶¯
+//ç½‘ç»œè®¾å¤‡é©±åŠ¨
 #include "BC35.h"
 #include "oled.h"
-//Ó²¼şÇı¶¯
+//ç¡¬ä»¶é©±åŠ¨
 #include "delay.h"
 #include "usart.h"
 
-//C¿â
+//Cåº“
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,20 +38,20 @@
 #define BC35_ONENET_INFO "AT+NSOCO=1,183.230.40.39,6002\r\n"  //"AT+IPSTART=\"TCP\",\"183.230.40.39\",6002\r\n"
 
 
-unsigned char BC35_buf[200];        //½ÓÊÕÄ£¿éµÄ·´À¡ĞÅÏ¢
+unsigned char BC35_buf[200];        //æ¥æ”¶æ¨¡å—çš„åé¦ˆä¿¡æ¯
 unsigned short BC35_cnt = 0, BC35_cntPre = 0;
 
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	BC35_Clear
+//	å‡½æ•°åç§°ï¼š	BC35_Clear
 //
-//	º¯Êı¹¦ÄÜ£º	Çå¿Õ»º´æ
+//	å‡½æ•°åŠŸèƒ½ï¼š	æ¸…ç©ºç¼“å­˜
 //
-//	Èë¿Ú²ÎÊı£º	ÎŞ
+//	å…¥å£å‚æ•°ï¼š	æ— 
 //
-//	·µ»Ø²ÎÊı£º	ÎŞ
+//	è¿”å›å‚æ•°ï¼š	æ— 
 //
-//	ËµÃ÷£º		
+//	è¯´æ˜ï¼š		
 //==========================================================
 void BC35_Clear(void)
 {
@@ -62,46 +62,46 @@ void BC35_Clear(void)
 }
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	BC35_WaitRecive
+//	å‡½æ•°åç§°ï¼š	BC35_WaitRecive
 //
-//	º¯Êı¹¦ÄÜ£º	µÈ´ı½ÓÊÕÍê³É
+//	å‡½æ•°åŠŸèƒ½ï¼š	ç­‰å¾…æ¥æ”¶å®Œæˆ
 //
-//	Èë¿Ú²ÎÊı£º	ÎŞ
+//	å…¥å£å‚æ•°ï¼š	æ— 
 //
-//	·µ»Ø²ÎÊı£º	REV_OK-½ÓÊÕÍê³É		REV_WAIT-½ÓÊÕ³¬Ê±Î´Íê³É
+//	è¿”å›å‚æ•°ï¼š	REV_OK-æ¥æ”¶å®Œæˆ		REV_WAIT-æ¥æ”¶è¶…æ—¶æœªå®Œæˆ
 //
-//	ËµÃ÷£º		Ñ­»·µ÷ÓÃ¼ì²âÊÇ·ñ½ÓÊÕÍê³É
+//	è¯´æ˜ï¼š		å¾ªç¯è°ƒç”¨æ£€æµ‹æ˜¯å¦æ¥æ”¶å®Œæˆ
 //==========================================================
 _Bool BC35_WaitRecive(void)
 {
 
-    if(BC35_cnt == 0) 							//Èç¹û½ÓÊÕ¼ÆÊıÎª0 ÔòËµÃ÷Ã»ÓĞ´¦ÓÚ½ÓÊÕÊı¾İÖĞ£¬ËùÒÔÖ±½ÓÌø³ö£¬½áÊøº¯Êı
+    if(BC35_cnt == 0) 							//å¦‚æœæ¥æ”¶è®¡æ•°ä¸º0 åˆ™è¯´æ˜æ²¡æœ‰å¤„äºæ¥æ”¶æ•°æ®ä¸­ï¼Œæ‰€ä»¥ç›´æ¥è·³å‡ºï¼Œç»“æŸå‡½æ•°
         return REV_WAIT;
 
-    if(BC35_cnt == BC35_cntPre)                                             //Èç¹ûÉÏÒ»´ÎµÄÖµºÍÕâ´ÎÏàÍ¬£¬ÔòËµÃ÷½ÓÊÕÍê±Ï
+    if(BC35_cnt == BC35_cntPre)                                             //å¦‚æœä¸Šä¸€æ¬¡çš„å€¼å’Œè¿™æ¬¡ç›¸åŒï¼Œåˆ™è¯´æ˜æ¥æ”¶å®Œæ¯•
     {
-        BC35_cnt = 0;							//Çå0½ÓÊÕ¼ÆÊı
+        BC35_cnt = 0;							//æ¸…0æ¥æ”¶è®¡æ•°
 
-        return REV_OK;							//·µ»Ø½ÓÊÕÍê³É±êÖ¾
+        return REV_OK;							//è¿”å›æ¥æ”¶å®Œæˆæ ‡å¿—
     }
 
-    BC35_cntPre = BC35_cnt;                                                 //ÖÃÎªÏàÍ¬
+    BC35_cntPre = BC35_cnt;                                                 //ç½®ä¸ºç›¸åŒ
 
-    return REV_WAIT;							//·µ»Ø½ÓÊÕÎ´Íê³É±êÖ¾
+    return REV_WAIT;							//è¿”å›æ¥æ”¶æœªå®Œæˆæ ‡å¿—
 
 }
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	BC35_SendCmd
+//	å‡½æ•°åç§°ï¼š	BC35_SendCmd
 //
-//	º¯Êı¹¦ÄÜ£º	·¢ËÍ×Ö·û´®ÃüÁî£¬²¢¼ì²é·µ»ØÖ¸ÁîÊÇ·ñÕıÈ·¡£
+//	å‡½æ•°åŠŸèƒ½ï¼š	å‘é€å­—ç¬¦ä¸²å‘½ä»¤ï¼Œå¹¶æ£€æŸ¥è¿”å›æŒ‡ä»¤æ˜¯å¦æ­£ç¡®ã€‚
 //
-//	Èë¿Ú²ÎÊı£º	cmd£ºÃüÁî
-//				res£ºĞèÒª¼ì²éµÄ·µ»ØÖ¸Áî
+//	å…¥å£å‚æ•°ï¼š	cmdï¼šå‘½ä»¤
+//				resï¼šéœ€è¦æ£€æŸ¥çš„è¿”å›æŒ‡ä»¤
 //
-//	·µ»Ø²ÎÊı£º	0-³É¹¦	1-Ê§°Ü
+//	è¿”å›å‚æ•°ï¼š	0-æˆåŠŸ	1-å¤±è´¥
 //
-//	ËµÃ÷£º		
+//	è¯´æ˜ï¼š		
 //==========================================================
 _Bool BC35_SendCmd(char *cmd, char *res)
 {
@@ -112,12 +112,12 @@ _Bool BC35_SendCmd(char *cmd, char *res)
     DelayXms(200);
     while(timeOut--)
     {
-        if(BC35_WaitRecive() == REV_OK)					//Èç¹ûÊÕµ½Êı¾İ
+        if(BC35_WaitRecive() == REV_OK)					//å¦‚æœæ”¶åˆ°æ•°æ®
         {
             UsartPrintf(USART_DEBUG,(char *)BC35_buf);
-            if(strstr((const char *)BC35_buf, res) != NULL)		//Èç¹û¼ìË÷µ½¹Ø¼ü´Ê
+            if(strstr((const char *)BC35_buf, res) != NULL)		//å¦‚æœæ£€ç´¢åˆ°å…³é”®è¯
             {
-                BC35_Clear();                                           //Çå¿Õ»º´æ ³É¹¦·´À¡0
+                BC35_Clear();                                           //æ¸…ç©ºç¼“å­˜ æˆåŠŸåé¦ˆ0
                 return 0;
             }
         }
@@ -133,38 +133,38 @@ _Bool BC35_SendCmd(char *cmd, char *res)
 
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	BC35_SendREVCMD
+//	å‡½æ•°åç§°ï¼š	BC35_SendREVCMD
 //
-//	º¯Êı¹¦ÄÜ£º	·¢ËÍÊ®Áù½øÖÆÊı×éÊı¾İºÍÊı¾İ³¤¶È£¬²¢¼ì²é·µ»ØÖ¸ÁîÊÇ·ñÕıÈ·¡£
+//	å‡½æ•°åŠŸèƒ½ï¼š	å‘é€åå…­è¿›åˆ¶æ•°ç»„æ•°æ®å’Œæ•°æ®é•¿åº¦ï¼Œå¹¶æ£€æŸ¥è¿”å›æŒ‡ä»¤æ˜¯å¦æ­£ç¡®ã€‚
 //
-//	Èë¿Ú²ÎÊı£º	cmd£ºÃüÁî
-//              len: ÃüÁî³¤¶È
-//				      res£ºĞèÒª¼ì²éµÄ²¿·Ö·µ»ØÊı¾İ
+//	å…¥å£å‚æ•°ï¼š	cmdï¼šå‘½ä»¤
+//              len: å‘½ä»¤é•¿åº¦
+//				      resï¼šéœ€è¦æ£€æŸ¥çš„éƒ¨åˆ†è¿”å›æ•°æ®
 //
-//	·µ»Ø²ÎÊı£º	0-³É¹¦	1-Ê§°Ü
+//	è¿”å›å‚æ•°ï¼š	0-æˆåŠŸ	1-å¤±è´¥
 //
-//	ËµÃ÷£º		
+//	è¯´æ˜ï¼š		
 //==========================================================
 _Bool BC35_SendREVCMD(char *cmd,unsigned short len,char *res)
 {
 
     unsigned char timeOut = 200;
-	  char flag = 0;//ÖØ·¢±êÖ¾Î»£¬½öÖØ·¢Ò»´Î
+	  char flag = 0;//é‡å‘æ ‡å¿—ä½ï¼Œä»…é‡å‘ä¸€æ¬¡
 
     Usart_SendString(USART2, (unsigned char *)cmd, len);
     DelayXms(200);
 
 	    while(timeOut--)
     {
-        if(BC35_WaitRecive() == REV_OK)					//Èç¹ûÊÕµ½Êı¾İ
+        if(BC35_WaitRecive() == REV_OK)					//å¦‚æœæ”¶åˆ°æ•°æ®
         {
             UsartPrintf(USART_DEBUG,(char *)BC35_buf);
-            if(strstr((const char *)BC35_buf, res) != NULL)		//Èç¹û¼ìË÷µ½¹Ø¼ü´Ê
+            if(strstr((const char *)BC35_buf, res) != NULL)		//å¦‚æœæ£€ç´¢åˆ°å…³é”®è¯
             {
-                BC35_Clear();                                           //Çå¿Õ»º´æ ³É¹¦·´À¡0
+                BC35_Clear();                                           //æ¸…ç©ºç¼“å­˜ æˆåŠŸåé¦ˆ0
                 return 0;
             }
-						else if((flag == 0) && (strstr((const char *)BC35_buf, "ERROR") != NULL))                                            //Èç¹û¼ìË÷µ½´íÎó¹Ø¼ü´Ê£¬Ôò800msºóÖØ·¢Ò»´Î
+						else if((flag == 0) && (strstr((const char *)BC35_buf, "ERROR") != NULL))                                            //å¦‚æœæ£€ç´¢åˆ°é”™è¯¯å…³é”®è¯ï¼Œåˆ™800msåé‡å‘ä¸€æ¬¡
 						{
 							flag = 1;
 							UsartPrintf(USART_DEBUG,"flag = 1");
@@ -185,16 +185,16 @@ _Bool BC35_SendREVCMD(char *cmd,unsigned short len,char *res)
 
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	BC35_SendRevCmd
+//	å‡½æ•°åç§°ï¼š	BC35_SendRevCmd
 //
-//	º¯Êı¹¦ÄÜ£º	·¢ËÍÌØÊâµÄÈ¡Êı¾İÃüÁî
+//	å‡½æ•°åŠŸèƒ½ï¼š	å‘é€ç‰¹æ®Šçš„å–æ•°æ®å‘½ä»¤
 //
-//	Èë¿Ú²ÎÊı£º	cmd£ºÃüÁî
-//				      res£ºĞèÒª¼ì²éµÄ²¿·Ö·µ»ØÊı¾İ
+//	å…¥å£å‚æ•°ï¼š	cmdï¼šå‘½ä»¤
+//				      resï¼šéœ€è¦æ£€æŸ¥çš„éƒ¨åˆ†è¿”å›æ•°æ®
 //
-//	·µ»Ø²ÎÊı£º	0-³É¹¦	1-Ê§°Ü
+//	è¿”å›å‚æ•°ï¼š	0-æˆåŠŸ	1-å¤±è´¥
 //
-//	ËµÃ÷£º		
+//	è¯´æ˜ï¼š		
 //==========================================================
 //_Bool BC35_SendRevCmd(char *cmd, char *res)
 //{
@@ -208,24 +208,24 @@ _Bool BC35_SendREVCMD(char *cmd,unsigned short len,char *res)
 //}
 
  //==========================================================
-//	º¯ÊıÃû³Æ£º	BC35_SENDDATA
+//	å‡½æ•°åç§°ï¼š	BC35_SENDDATA
 //
-//	º¯Êı¹¦ÄÜ£º	·¢ËÍ×Ö·ûÊı×éÊı¾İ
+//	å‡½æ•°åŠŸèƒ½ï¼š	å‘é€å­—ç¬¦æ•°ç»„æ•°æ®
 //
-//	Èë¿Ú²ÎÊı£º	data£ºÊı¾İ
-//				len£º³¤¶È
+//	å…¥å£å‚æ•°ï¼š	dataï¼šæ•°æ®
+//				lenï¼šé•¿åº¦
 //
-//	·µ»Ø²ÎÊı£º	ÎŞ
+//	è¿”å›å‚æ•°ï¼š	æ— 
 // sprintf((char*)(SendBuf),"%s,%d,%s\r\n","AT+NSOSD=1",len,(char *)data);
-//	ËµÃ÷£º		
+//	è¯´æ˜ï¼š		
 //==========================================================
 void BC35_SENDDATA(unsigned char *data, unsigned short len)
 {
     char SendBuf[500];
-		int cmd_len = 0;//BC35·¢ËÍÊı¾İ°üÇ°²¿ÃüÁî³¤¶È
-		int n = 0;//Êı¾İ¿½±´¼ÆÊıÆ÷
-		int i = 0;//¶¨ÒåÕû¸ö·¢ËÍÊı¾İ°ü¼ÆÊıÆ÷
-		int total_len = 0;//¶¨ÒåÕû¸öÊı¾İ°üµÄ³¤¶È
+		int cmd_len = 0;//BC35å‘é€æ•°æ®åŒ…å‰éƒ¨å‘½ä»¤é•¿åº¦
+		int n = 0;//æ•°æ®æ‹·è´è®¡æ•°å™¨
+		int i = 0;//å®šä¹‰æ•´ä¸ªå‘é€æ•°æ®åŒ…è®¡æ•°å™¨
+		int total_len = 0;//å®šä¹‰æ•´ä¸ªæ•°æ®åŒ…çš„é•¿åº¦
 	
     memset(SendBuf, 0, sizeof(SendBuf));
     sprintf((char*)(SendBuf),"%s,%d,","AT+NSOSD=1",len/2);
@@ -233,7 +233,7 @@ void BC35_SENDDATA(unsigned char *data, unsigned short len)
 	    
 		  for(i = cmd_len;i < cmd_len+len; i++)
 		{		     
-	         SendBuf[i] = data[n++];//½«×Ö·ûÊı×éÖĞµÄ×Ö·ûÒ»¸öÒ»¸öµÄ×ªÈë»º´æ
+	         SendBuf[i] = data[n++];//å°†å­—ç¬¦æ•°ç»„ä¸­çš„å­—ç¬¦ä¸€ä¸ªä¸€ä¸ªçš„è½¬å…¥ç¼“å­˜
 		}
 		SendBuf[i++] = '\r';
 		SendBuf[i++] = '\n';
@@ -241,15 +241,15 @@ void BC35_SENDDATA(unsigned char *data, unsigned short len)
 
 		total_len = cmd_len + len + 2;
 		
-		//×Ö·ûÊı×é×ª»¯Îª×Ö·û´®
+		//å­—ç¬¦æ•°ç»„è½¬åŒ–ä¸ºå­—ç¬¦ä¸²
 		
 				for (int j = 0; j < total_len; j++)
 		{
-			UsartPrintf(USART_DEBUG,"SendBuf[%d] = %c\r\n", j, SendBuf[j]);//Êä³ö×ª»¯ºóµÄ×Ö·û´®Êı¾İ°ü
+			UsartPrintf(USART_DEBUG,"SendBuf[%d] = %c\r\n", j, SendBuf[j]);//è¾“å‡ºè½¬åŒ–åçš„å­—ç¬¦ä¸²æ•°æ®åŒ…
 		}
 
 
-    if(!BC35_SendREVCMD(SendBuf,total_len, "OK"))				//Èô·¢ËÍÊı¾İ³É¹¦Ôò´òÓ¡º¯ÊıÌåÄÚĞÅÏ¢
+    if(!BC35_SendREVCMD(SendBuf,total_len, "OK"))				//è‹¥å‘é€æ•°æ®æˆåŠŸåˆ™æ‰“å°å‡½æ•°ä½“å†…ä¿¡æ¯
     {
 			  UsartPrintf(USART_DEBUG,"*********BC35_SendREVCMD**********\r\n");
         DelayXms(500);
@@ -263,16 +263,16 @@ void BC35_SENDDATA(unsigned char *data, unsigned short len)
 
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	BC35_SendData
+//	å‡½æ•°åç§°ï¼š	BC35_SendData
 //
-//	º¯Êı¹¦ÄÜ£º	·¢ËÍ×Ö·û´®Êı¾İ
+//	å‡½æ•°åŠŸèƒ½ï¼š	å‘é€å­—ç¬¦ä¸²æ•°æ®
 //
-//	Èë¿Ú²ÎÊı£º	data£ºÊı¾İ
-//				len£º³¤¶È
+//	å…¥å£å‚æ•°ï¼š	dataï¼šæ•°æ®
+//				lenï¼šé•¿åº¦
 //
-//	·µ»Ø²ÎÊı£º	ÎŞ
+//	è¿”å›å‚æ•°ï¼š	æ— 
 //
-//	ËµÃ÷£º		
+//	è¯´æ˜ï¼š		
 //==========================================================
 //void BC35_SendData(unsigned char *data, unsigned short len)
 //{
@@ -280,11 +280,11 @@ void BC35_SENDDATA(unsigned char *data, unsigned short len)
 //    memset(SendBuf, 0, sizeof(SendBuf));
 //    sprintf((char*)(SendBuf),"%s,%d,%s\r\n","AT+NSOSD=1",len,(char *)data);
 //    UsartPrintf(USART_DEBUG,(char *)SendBuf);
-//    if(!BC35_SendCmd(SendBuf, "OK"))				//ÊÕµ½¡®>¡¯Ê±¿ÉÒÔ·¢ËÍÊı¾İ
+//    if(!BC35_SendCmd(SendBuf, "OK"))				//æ”¶åˆ°â€˜>â€™æ—¶å¯ä»¥å‘é€æ•°æ®
 //    {
 //        DelayXms(500);
-//        Usart_SendString(USART2,"AT+NSORF=1,100\r\n", 16);	//·¢ËÍÉè±¸Á¬½ÓÇëÇóÊı¾İ
-//        if(BC35_WaitRecive() == REV_OK)							//Èç¹ûÊÕµ½Êı¾İ
+//        Usart_SendString(USART2,"AT+NSORF=1,100\r\n", 16);	//å‘é€è®¾å¤‡è¿æ¥è¯·æ±‚æ•°æ®
+//        if(BC35_WaitRecive() == REV_OK)							//å¦‚æœæ”¶åˆ°æ•°æ®
 //        {
 //            UsartPrintf(USART_DEBUG,(char *)BC35_buf);
 //        }
@@ -298,39 +298,39 @@ void BC35_SENDDATA(unsigned char *data, unsigned short len)
 //}
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	BC35_GetNSONMI
+//	å‡½æ•°åç§°ï¼š	BC35_GetNSONMI
 //
-//	º¯Êı¹¦ÄÜ£º	µÈ´ı»ñÈ¡µ½´ïµÄSocketÏûÏ¢¡£
-//              ÊÕµ½+NSONMIºóÌáÈ¡³ö½ÓÊÕµ½Êı¾İÁ¿£¬²¢·¢ËÍAT+NSORF,»ñÈ¡Êı¾İ¡£
+//	å‡½æ•°åŠŸèƒ½ï¼š	ç­‰å¾…è·å–åˆ°è¾¾çš„Socketæ¶ˆæ¯ã€‚
+//              æ”¶åˆ°+NSONMIåæå–å‡ºæ¥æ”¶åˆ°æ•°æ®é‡ï¼Œå¹¶å‘é€AT+NSORF,è·å–æ•°æ®ã€‚
 //
-//	Èë¿Ú²ÎÊı£º	timeOut£ºµÈ´ı³¬Ê±Ê±¼ä
-//				ÊäÈëÊı×Ö*10ms
+//	å…¥å£å‚æ•°ï¼š	timeOutï¼šç­‰å¾…è¶…æ—¶æ—¶é—´
+//				è¾“å…¥æ•°å­—*10ms
 //
-//	·µ»Ø²ÎÊı£º	»ñÈ¡³É¹¦·µ»Ø1£¬Ê§°Ü·µ»Ø0.
+//	è¿”å›å‚æ•°ï¼š	è·å–æˆåŠŸè¿”å›1ï¼Œå¤±è´¥è¿”å›0.
 //
-//	ËµÃ÷£º		
+//	è¯´æ˜ï¼š		
 //==========================================================
 
 unsigned char BC35_GetNSONMI(unsigned short timeOut)
 {
 	 char *req_lengthPot = NULL;
-	 char BC35_SendAT[100] = "AT+NSORF=1,";//µ¥Æ¬»úÏòBC35ÇëÇóÒÑ´Óonenet½ÓÊÕµ½µÄÊı¾İ
+	 char BC35_SendAT[100] = "AT+NSORF=1,";//å•ç‰‡æœºå‘BC35è¯·æ±‚å·²ä»onenetæ¥æ”¶åˆ°çš„æ•°æ®
 	    do
     {
-        if(BC35_WaitRecive() == REV_OK)								//Èç¹û½ÓÊÕÍê³É
+        if(BC35_WaitRecive() == REV_OK)								//å¦‚æœæ¥æ”¶å®Œæˆ
         {
             UsartPrintf(USART_DEBUG,(char *)BC35_buf);
             req_lengthPot = strstr((char *)BC35_buf, ",");
-            if(req_lengthPot == NULL)											//Èç¹ûÃ»ÕÒµ½£¬¿ÉÄÜÊÇIPDATAÍ·µÄÑÓ³Ù£¬»¹ÊÇĞèÒªµÈ´ıÒ»»á£¬µ«²»»á³¬¹ıÉè¶¨µÄÊ±¼ä
+            if(req_lengthPot == NULL)											//å¦‚æœæ²¡æ‰¾åˆ°ï¼Œå¯èƒ½æ˜¯IPDATAå¤´çš„å»¶è¿Ÿï¼Œè¿˜æ˜¯éœ€è¦ç­‰å¾…ä¸€ä¼šï¼Œä½†ä¸ä¼šè¶…è¿‡è®¾å®šçš„æ—¶é—´
             {
                 UsartPrintf(USART_DEBUG, "\"IPD\" not found\r\n");
             }
             else
             {
-                UsartPrintf(USART_DEBUG, "ÊÕµ½·µ»ØÊı¾İ\r\n");
+                UsartPrintf(USART_DEBUG, "æ”¶åˆ°è¿”å›æ•°æ®\r\n");
 
                 req_lengthPot++;
-                UsartPrintf(USART_DEBUG, "½ÓÊÕµÄÊı¾İÁ¿%s\r\n",req_lengthPot);
+                UsartPrintf(USART_DEBUG, "æ¥æ”¶çš„æ•°æ®é‡%s\r\n",req_lengthPot);
 							  strcat(BC35_SendAT,req_lengthPot);
 							  
                 UsartPrintf(USART_DEBUG,BC35_SendAT);
@@ -345,7 +345,7 @@ unsigned char BC35_GetNSONMI(unsigned short timeOut)
             }
         }
 
-        DelayXms(10);													//ÑÓÊ±µÈ´ı
+        DelayXms(10);													//å»¶æ—¶ç­‰å¾…
 //				UsartPrintf(USART_DEBUG, "=====================\r\n");
     } while(timeOut--);
 	
@@ -359,35 +359,35 @@ unsigned char BC35_GetNSONMI(unsigned short timeOut)
 
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	BC35_GetDATA
+//	å‡½æ•°åç§°ï¼š	BC35_GetDATA
 //
-//	º¯Êı¹¦ÄÜ£º	Ê¹ÓÃAT+NSORFºó£¨BC35_GetNSONMIº¯ÊıÊ¹ÓÃºó£©£¬»ñÈ¡Ä£¿é·µ»ØµÄÊı¾İ¡£
+//	å‡½æ•°åŠŸèƒ½ï¼š	ä½¿ç”¨AT+NSORFåï¼ˆBC35_GetNSONMIå‡½æ•°ä½¿ç”¨åï¼‰ï¼Œè·å–æ¨¡å—è¿”å›çš„æ•°æ®ã€‚
 //
-//	Èë¿Ú²ÎÊı£º	timeOutµÈ´ıµÄÊ±¼ä(³ËÒÔ10ms)
+//	å…¥å£å‚æ•°ï¼š	timeOutç­‰å¾…çš„æ—¶é—´(ä¹˜ä»¥10ms)
 //
-//	·µ»Ø²ÎÊı£º	Æ½Ì¨·µ»ØµÄÔ­Ê¼Êı¾İ
+//	è¿”å›å‚æ•°ï¼š	å¹³å°è¿”å›çš„åŸå§‹æ•°æ®
 //
-//	ËµÃ÷£º		²»Í¬ÍøÂçÉè±¸·µ»ØµÄ¸ñÊ½²»Í¬£¬ĞèÒªÈ¥µ÷ÊÔ
+//	è¯´æ˜ï¼š		ä¸åŒç½‘ç»œè®¾å¤‡è¿”å›çš„æ ¼å¼ä¸åŒï¼Œéœ€è¦å»è°ƒè¯•
 //==========================================================
 unsigned char *BC35_GetDATA(unsigned short timeOut)
 {
-    char *ptrIPD = NULL;   //IPÍ·Ö¸Õë
-	  char *token = NULL;    //·Ö¸îÖ¸Õë
-	  char i = 0;            //·Ö¸î¼ÆÊıÆ÷
+    char *ptrIPD = NULL;   //IPå¤´æŒ‡é’ˆ
+	  char *token = NULL;    //åˆ†å‰²æŒ‡é’ˆ
+	  char i = 0;            //åˆ†å‰²è®¡æ•°å™¨
     do
     {
-        if(BC35_WaitRecive() == REV_OK)								//Èç¹û½ÓÊÕÍê³É
+        if(BC35_WaitRecive() == REV_OK)								//å¦‚æœæ¥æ”¶å®Œæˆ
         {
             UsartPrintf(USART_DEBUG,(char *)BC35_buf);
             ptrIPD = strstr((char *)BC35_buf, "1,183.230.40.39,6002,");
-            if(ptrIPD == NULL)											//Èç¹ûÃ»ÕÒµ½£¬¿ÉÄÜÊÇIPDATAÍ·µÄÑÓ³Ù£¬»¹ÊÇĞèÒªµÈ´ıÒ»»á£¬µ«²»»á³¬¹ıÉè¶¨µÄÊ±¼ä
+            if(ptrIPD == NULL)											//å¦‚æœæ²¡æ‰¾åˆ°ï¼Œå¯èƒ½æ˜¯IPDATAå¤´çš„å»¶è¿Ÿï¼Œè¿˜æ˜¯éœ€è¦ç­‰å¾…ä¸€ä¼šï¼Œä½†ä¸ä¼šè¶…è¿‡è®¾å®šçš„æ—¶é—´
             {
                 UsartPrintf(USART_DEBUG, "\"IPD\" not found\r\n");
             }
             else
             {
-                UsartPrintf(USART_DEBUG, "ÊÕµ½Êı¾İ\r\n");
-                token = strtok(BC35_buf,","); //½«BC35_buf¸ù¾İ¶ººÅ·Ö½â¡£
+                UsartPrintf(USART_DEBUG, "æ”¶åˆ°æ•°æ®\r\n");
+                token = strtok(BC35_buf,","); //å°†BC35_bufæ ¹æ®é€—å·åˆ†è§£ã€‚
 							
 							while(token != NULL&&i < 4)
 							{
@@ -398,7 +398,7 @@ unsigned char *BC35_GetDATA(unsigned short timeOut)
 							
 							if(i == 4)
 							{
-							      UsartPrintf(USART_DEBUG, "½ÓÊÕÍê³É\r\n");
+							      UsartPrintf(USART_DEBUG, "æ¥æ”¶å®Œæˆ\r\n");
                     UsartPrintf(USART_DEBUG,(char *)token);
                     return (unsigned char *)(token);
 							}
@@ -408,11 +408,11 @@ unsigned char *BC35_GetDATA(unsigned short timeOut)
             }
         }
 
-        DelayXms(10);													//ÑÓÊ±µÈ´ı
+        DelayXms(10);													//å»¶æ—¶ç­‰å¾…
 //				UsartPrintf(USART_DEBUG, "=====================\r\n");
     } while(timeOut--);
 
-    return NULL;														//³¬Ê±»¹Î´ÕÒµ½£¬·µ»Ø¿ÕÖ¸Õë
+    return NULL;														//è¶…æ—¶è¿˜æœªæ‰¾åˆ°ï¼Œè¿”å›ç©ºæŒ‡é’ˆ
 
 }
 
@@ -425,37 +425,37 @@ unsigned char *BC35_GetDATA(unsigned short timeOut)
 
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	BC35_GetIPD
+//	å‡½æ•°åç§°ï¼š	BC35_GetIPD
 //
-//	º¯Êı¹¦ÄÜ£º	»ñÈ¡Æ½Ì¨·µ»ØµÄIP±¨Í·Êı¾İ
+//	å‡½æ•°åŠŸèƒ½ï¼š	è·å–å¹³å°è¿”å›çš„IPæŠ¥å¤´æ•°æ®
 //
-//	Èë¿Ú²ÎÊı£º	timeOutµÈ´ıµÄÊ±¼ä(³ËÒÔ10ms)
+//	å…¥å£å‚æ•°ï¼š	timeOutç­‰å¾…çš„æ—¶é—´(ä¹˜ä»¥10ms)
 //
-//	·µ»Ø²ÎÊı£º	Æ½Ì¨·µ»ØµÄÔ­Ê¼Êı¾İ
+//	è¿”å›å‚æ•°ï¼š	å¹³å°è¿”å›çš„åŸå§‹æ•°æ®
 //
-//	ËµÃ÷£º		²»Í¬ÍøÂçÉè±¸·µ»ØµÄ¸ñÊ½²»Í¬£¬ĞèÒªÈ¥µ÷ÊÔ
+//	è¯´æ˜ï¼š		ä¸åŒç½‘ç»œè®¾å¤‡è¿”å›çš„æ ¼å¼ä¸åŒï¼Œéœ€è¦å»è°ƒè¯•
 //==========================================================
 //unsigned char *BC35_GetIPD(unsigned short timeOut)
 //{
 //    char *ptrIPD = NULL;
 //    do
 //    {
-//        if(BC35_WaitRecive() == REV_OK)								//Èç¹û½ÓÊÕÍê³É
+//        if(BC35_WaitRecive() == REV_OK)								//å¦‚æœæ¥æ”¶å®Œæˆ
 //        {
 //            UsartPrintf(USART_DEBUG,(char *)BC35_buf);
 //            ptrIPD = strstr((char *)BC35_buf, "1,183.230.40.39,6002,");
-//            if(ptrIPD == NULL)											//Èç¹ûÃ»ÕÒµ½£¬¿ÉÄÜÊÇIPDATAÍ·µÄÑÓ³Ù£¬»¹ÊÇĞèÒªµÈ´ıÒ»»á£¬µ«²»»á³¬¹ıÉè¶¨µÄÊ±¼ä
+//            if(ptrIPD == NULL)											//å¦‚æœæ²¡æ‰¾åˆ°ï¼Œå¯èƒ½æ˜¯IPDATAå¤´çš„å»¶è¿Ÿï¼Œè¿˜æ˜¯éœ€è¦ç­‰å¾…ä¸€ä¼šï¼Œä½†ä¸ä¼šè¶…è¿‡è®¾å®šçš„æ—¶é—´
 //            {
 //                UsartPrintf(USART_DEBUG, "\"IPD\" not found\r\n");
 //            }
 //            else
 //            {
-//                UsartPrintf(USART_DEBUG, "ÊÕµ½Êı¾İ\r\n");
-//                ptrIPD = strchr(ptrIPD, '\n');							//ÕÒµ½'\n'
+//                UsartPrintf(USART_DEBUG, "æ”¶åˆ°æ•°æ®\r\n");
+//                ptrIPD = strchr(ptrIPD, '\n');							//æ‰¾åˆ°'\n'
 //                if(ptrIPD != NULL)
 //                {
 //                    ptrIPD++;
-//                    UsartPrintf(USART_DEBUG, "½ÓÊÕÍê³É\r\n");
+//                    UsartPrintf(USART_DEBUG, "æ¥æ”¶å®Œæˆ\r\n");
 //                    UsartPrintf(USART_DEBUG,(char *)ptrIPD);
 //                    return (unsigned char *)(ptrIPD);
 //                }
@@ -464,53 +464,53 @@ unsigned char *BC35_GetDATA(unsigned short timeOut)
 //            }
 //        }
 
-//        DelayXms(10);													//ÑÓÊ±µÈ´ı
+//        DelayXms(10);													//å»¶æ—¶ç­‰å¾…
 ////				UsartPrintf(USART_DEBUG, "=====================\r\n");
 //    } while(timeOut--);
 
-//    return NULL;														//³¬Ê±»¹Î´ÕÒµ½£¬·µ»Ø¿ÕÖ¸Õë
+//    return NULL;														//è¶…æ—¶è¿˜æœªæ‰¾åˆ°ï¼Œè¿”å›ç©ºæŒ‡é’ˆ
 
 //}
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	BC35_Init
+//	å‡½æ•°åç§°ï¼š	BC35_Init
 //
-//	º¯Êı¹¦ÄÜ£º	³õÊ¼»¯BC35
+//	å‡½æ•°åŠŸèƒ½ï¼š	åˆå§‹åŒ–BC35
 //
-//	Èë¿Ú²ÎÊı£º	ÎŞ
+//	å…¥å£å‚æ•°ï¼š	æ— 
 //
-//	·µ»Ø²ÎÊı£º	ÎŞ
+//	è¿”å›å‚æ•°ï¼š	æ— 
 //
-//	ËµÃ÷£º		
+//	è¯´æ˜ï¼š		
 //==========================================================
 void BC35_Init(void)
 {
 
     BC35_Clear();
     DelayXms(1000);
-    UsartPrintf(USART_DEBUG, "1.ATE0\r\n");     //¹Ø±Õ»ØÏÔ
+    UsartPrintf(USART_DEBUG, "1.ATE0\r\n");     //å…³é—­å›æ˜¾
     while(BC35_SendCmd("ATE0\r\n", "OK"))
         DelayXms(500);
 
-    while(BC35_SendCmd("AT+CMEE=1\r\n", "OK"))  //±£SIM¿¨PINÂë½âËø£¬·µ»ØREADY£¬±íÊ¾½âËø³É¹¦
+    while(BC35_SendCmd("AT+CMEE=1\r\n", "OK"))  //ä¿SIMå¡PINç è§£é”ï¼Œè¿”å›READYï¼Œè¡¨ç¤ºè§£é”æˆåŠŸ
         DelayXms(500);
 
     UsartPrintf(USART_DEBUG, "2.AT\r\n");
-    while(BC35_SendCmd("AT\r\n", "OK"))	//¿´ÏÂ¿¨×´Ì¬ÊÇ·ñOK ÄÜ·ñ»ñÈ¡µ½¿¨ºÅ
+    while(BC35_SendCmd("AT\r\n", "OK"))	//çœ‹ä¸‹å¡çŠ¶æ€æ˜¯å¦OK èƒ½å¦è·å–åˆ°å¡å·
         DelayXms(500);
 
-    UsartPrintf(USART_DEBUG, "3.AT+CGSN=1\r\n");//»ñÈ¡IMEI
+    UsartPrintf(USART_DEBUG, "3.AT+CGSN=1\r\n");//è·å–IMEI
     while(BC35_SendCmd("AT+CGSN=1\r\n", "OK"))
         DelayXms(500);
 
     BC35_Clear();
-    if(!BC35_SendCmd("AT+NBAND?\r\n","+NBAND:5"))//ÅĞ¶ÏÊÇ·ñÎª+NBAND:5
+    if(!BC35_SendCmd("AT+NBAND?\r\n","+NBAND:5"))//åˆ¤æ–­æ˜¯å¦ä¸º+NBAND:5
     {
-        OLED_ShowString(4,4,"BAND:5 REG[..]");   //ÊÇ·ñÊÇµçĞÅµÄ
+        OLED_ShowString(4,4,"BAND:5 REG[..]");   //æ˜¯å¦æ˜¯ç”µä¿¡çš„
     }
     else
     {
-        OLED_ShowString(4,4,"BAND:8 REG[..]");    //·ñÔò¾ÍÊÇÒÆ¶¯ÁªÍ¨
+        OLED_ShowString(4,4,"BAND:8 REG[..]");    //å¦åˆ™å°±æ˜¯ç§»åŠ¨è”é€š
     }
     //	while(BC35_SendCmd("AT+NBAND?\r\n","OK"))
     //		DelayXms(500);
@@ -531,7 +531,7 @@ void BC35_Init(void)
 
     BC35_Clear();
     UsartPrintf(USART_DEBUG, "5.AT+CSQ\r\n");
-    while(!BC35_SendCmd("AT+CSQ\r\n","CSQ:99,99"))                     //¼¤»î
+    while(!BC35_SendCmd("AT+CSQ\r\n","CSQ:99,99"))                     //æ¿€æ´»
         DelayXms(500);
 
 
@@ -541,22 +541,22 @@ void BC35_Init(void)
     //		DelayXms(500);
     BC35_Clear();
     UsartPrintf(USART_DEBUG, "6.AT+CGATT=1\r\n");
-    BC35_SendCmd("AT+CGATT=1\r\n","OK");                                 //¼¤»î×´Ì¬
+    BC35_SendCmd("AT+CGATT=1\r\n","OK");                                 //æ¿€æ´»çŠ¶æ€
     DelayXms(500);
 
     UsartPrintf(USART_DEBUG, "7.AT+CGATT?\r\n");
-    while(BC35_SendCmd("AT+CGATT?\r\n","CGATT:1"))                                 //¼¤»î×´Ì¬
+    while(BC35_SendCmd("AT+CGATT?\r\n","CGATT:1"))                                 //æ¿€æ´»çŠ¶æ€
     {
         UsartPrintf(USART_DEBUG, "Regedit PDP[..]\r\n");
         DelayXms(500);
     }
 
     UsartPrintf(USART_DEBUG, "8.AT+CGPADDR\r\n");
-    BC35_SendCmd("AT+CGPADDR\r\n","OK");                                 //¼¤»î×´Ì¬
+    BC35_SendCmd("AT+CGPADDR\r\n","OK");                                 //æ¿€æ´»çŠ¶æ€
     DelayXms(500);
 
     UsartPrintf(USART_DEBUG, "9.AT+NSOCR=STREAM,6,56000,1\r\n");
-    while(BC35_SendCmd("AT+NSOCR=STREAM,6,56000,1\r\n","OK"))           //±ØĞëÎªµ¥Á¬½Ó£¬²»È»Æ½Ì¨IP¶¼Á¬²»ÉÏ
+    while(BC35_SendCmd("AT+NSOCR=STREAM,6,56000,1\r\n","OK"))           //å¿…é¡»ä¸ºå•è¿æ¥ï¼Œä¸ç„¶å¹³å°IPéƒ½è¿ä¸ä¸Š
     {
         BC35_SendCmd("AT+NSOCL=1\r\n","OK");
         DelayXms(500);
@@ -564,13 +564,13 @@ void BC35_Init(void)
 
     UsartPrintf(USART_DEBUG, "-----------------\r\n");
     UsartPrintf(USART_DEBUG, BC35_ONENET_INFO);
-    while(BC35_SendCmd(BC35_ONENET_INFO,"OK"))				//Á¬½Óµ½·şÎñÆ÷
+    while(BC35_SendCmd(BC35_ONENET_INFO,"OK"))				//è¿æ¥åˆ°æœåŠ¡å™¨
     {
         UsartPrintf(USART_DEBUG, "AT+NSOCL=1\r\n");
         BC35_SendCmd("AT+NSOCL=1\r\n","OK");
         DelayXms(500);
         UsartPrintf(USART_DEBUG, "AT+NSOCR=STREAM,6,56000,1\r\n");
-        while(BC35_SendCmd("AT+NSOCR=STREAM,6,56000,1\r\n","OK"))	//±ØĞëÎªµ¥Á¬½Ó£¬²»È»Æ½Ì¨IP¶¼Á¬²»ÉÏ
+        while(BC35_SendCmd("AT+NSOCR=STREAM,6,56000,1\r\n","OK"))	//å¿…é¡»ä¸ºå•è¿æ¥ï¼Œä¸ç„¶å¹³å°IPéƒ½è¿ä¸ä¸Š
         {
             UsartPrintf(USART_DEBUG, "AT+NSOCL=1\r\n");
             BC35_SendCmd("AT+NSOCL=1\r\n","OK");
@@ -583,22 +583,22 @@ void BC35_Init(void)
 }
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	USART2_IRQHandler
+//	å‡½æ•°åç§°ï¼š	USART2_IRQHandler
 //
-//	º¯Êı¹¦ÄÜ£º	´®¿Ú2ÊÕ·¢ÖĞ¶Ï
+//	å‡½æ•°åŠŸèƒ½ï¼š	ä¸²å£2æ”¶å‘ä¸­æ–­
 //
-//	Èë¿Ú²ÎÊı£º	ÎŞ
+//	å…¥å£å‚æ•°ï¼š	æ— 
 //
-//	·µ»Ø²ÎÊı£º	ÎŞ
+//	è¿”å›å‚æ•°ï¼š	æ— 
 //
-//	ËµÃ÷£º		
+//	è¯´æ˜ï¼š		
 //==========================================================
 void USART2_IRQHandler(void)
 {
 
-    if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) //½ÓÊÕÖĞ¶Ï
+    if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) //æ¥æ”¶ä¸­æ–­
     {
-        if(BC35_cnt >= sizeof(BC35_buf))	BC35_cnt = 0; //·ÀÖ¹´®¿Ú±»Ë¢±¬
+        if(BC35_cnt >= sizeof(BC35_buf))	BC35_cnt = 0; //é˜²æ­¢ä¸²å£è¢«åˆ·çˆ†
         BC35_buf[BC35_cnt++] = USART2->DR;
 
         USART_ClearFlag(USART2, USART_FLAG_RXNE);

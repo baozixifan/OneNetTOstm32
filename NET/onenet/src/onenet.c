@@ -2,41 +2,41 @@
 	************************************************************
 	************************************************************
 	************************************************************
-	*	ÎÄ¼şÃû£º 	onenet.c
+	*	æ–‡ä»¶åï¼š 	onenet.c
 	*
-        *	×÷Õß£º 		leigong
+        *	ä½œè€…ï¼š 		leigong
 	*
-	*	ÈÕÆÚ£º 		2017-05-08
+	*	æ—¥æœŸï¼š 		2017-05-08
 	*
-	*	°æ±¾£º 		V1.1
+	*	ç‰ˆæœ¬ï¼š 		V1.1
 	*
-	*	ËµÃ÷£º 		ÓëonenetÆ½Ì¨µÄÊı¾İ½»»¥½Ó¿Ú²ã
+	*	è¯´æ˜ï¼š 		ä¸onenetå¹³å°çš„æ•°æ®äº¤äº’æ¥å£å±‚
 	*
-	*	ĞŞ¸Ä¼ÇÂ¼£º	V1.0£ºĞ­Òé·â×°¡¢·µ»ØÅĞ¶Ï¶¼ÔÚÍ¬Ò»¸öÎÄ¼ş£¬²¢ÇÒ²»Í¬Ğ­Òé½Ó¿Ú²»Í¬¡£
-	*				V1.1£ºÌá¹©Í³Ò»½Ó¿Ú¹©Ó¦ÓÃ²ãÊ¹ÓÃ£¬¸ù¾İ²»Í¬Ğ­ÒéÎÄ¼şÀ´·â×°Ğ­ÒéÏà¹ØµÄÄÚÈİ¡£
+	*	ä¿®æ”¹è®°å½•ï¼š	V1.0ï¼šåè®®å°è£…ã€è¿”å›åˆ¤æ–­éƒ½åœ¨åŒä¸€ä¸ªæ–‡ä»¶ï¼Œå¹¶ä¸”ä¸åŒåè®®æ¥å£ä¸åŒã€‚
+	*				V1.1ï¼šæä¾›ç»Ÿä¸€æ¥å£ä¾›åº”ç”¨å±‚ä½¿ç”¨ï¼Œæ ¹æ®ä¸åŒåè®®æ–‡ä»¶æ¥å°è£…åè®®ç›¸å…³çš„å†…å®¹ã€‚
 	************************************************************
 	************************************************************
 	************************************************************
 **/
 
-//µ¥Æ¬»úÍ·ÎÄ¼ş
+//å•ç‰‡æœºå¤´æ–‡ä»¶
 #include "stm32f10x.h"
 #include "MQTTData.h"
-//ÍøÂçÉè±¸
+//ç½‘ç»œè®¾å¤‡
 #include "BC35.h"
 
-//Ğ­ÒéÎÄ¼ş
+//åè®®æ–‡ä»¶
 #include "onenet.h"
 #include "mqttkit.h"
 #include "HEXSTR.h"
 #include "MQTTData.h"
 
-//Ó²¼şÇı¶¯
+//ç¡¬ä»¶é©±åŠ¨
 #include "usart.h"
 #include "delay.h"
 #include "adxl362.h"
 #include "DHT11.h"
-//C¿â
+//Cåº“
 #include <string.h>
 #include <stdio.h>
 
@@ -47,27 +47,27 @@
 
 #define DEVID		"508860545"
 
-unsigned char heart_beat = 0; //ĞÄÌø
-unsigned char errCount = 0;   //´íÎó¼ÆÊı
-//unsigned char sendData = 0;   //·¢ËÍÊı¾İÀàĞÍ
+unsigned char heart_beat = 0; //å¿ƒè·³
+unsigned char errCount = 0;   //é”™è¯¯è®¡æ•°
+//unsigned char sendData = 0;   //å‘é€æ•°æ®ç±»å‹
 extern unsigned char BC35_buf[200];
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	OneNET_SendData_Heart
+//	å‡½æ•°åç§°ï¼š	OneNET_SendData_Heart
 //
-//	º¯Êı¹¦ÄÜ£º	ĞÄÌø¼ì²â
+//	å‡½æ•°åŠŸèƒ½ï¼š	å¿ƒè·³æ£€æµ‹
 //
-//	Èë¿Ú²ÎÊı£º	ÎŞ
+//	å…¥å£å‚æ•°ï¼š	æ— 
 //
-//	·µ»Ø²ÎÊı£º	0-·¢ËÍ³É¹¦	£»SEND_TYPE_HEART-ĞèÒªÖØËÍ
+//	è¿”å›å‚æ•°ï¼š	0-å‘é€æˆåŠŸ	ï¼›SEND_TYPE_HEART-éœ€è¦é‡é€
 //
-//	ËµÃ÷£º		
+//	è¯´æ˜ï¼š		
 //==========================================================
 unsigned char OneNET_SendData_Heart(void)
 {
 	
-	MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0};					//Ğ­Òé°ü
-	unsigned char mqttSenddataString[200];//×ªÎªASCIIÂë×Ö·û´®ºó£¬×Ö·û´®µÄ»º´æ
+	MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0};					//åè®®åŒ…
+	unsigned char mqttSenddataString[200];//è½¬ä¸ºASCIIç å­—ç¬¦ä¸²åï¼Œå­—ç¬¦ä¸²çš„ç¼“å­˜
 	
 	
 	if(MQTT_PacketPing(&mqttPacket))
@@ -76,28 +76,28 @@ unsigned char OneNET_SendData_Heart(void)
 	heart_beat = 0;
 
   HexArrayToString(mqttPacket._data, mqttPacket._len, mqttSenddataString);	
-	BC35_SENDDATA(mqttSenddataString, (mqttPacket._len)*2);			//ÏòÆ½Ì¨ÉÏ´«ĞÄÌøÇëÇó
-//	NET_DEVICE_AddDataSendList(mqttPacket._data, mqttPacket._len, 0);	//¼ÓÈëÁ´±í
+	BC35_SENDDATA(mqttSenddataString, (mqttPacket._len)*2);			//å‘å¹³å°ä¸Šä¼ å¿ƒè·³è¯·æ±‚
+//	NET_DEVICE_AddDataSendList(mqttPacket._data, mqttPacket._len, 0);	//åŠ å…¥é“¾è¡¨
 	
-	MQTT_DeleteBuffer(&mqttPacket);										//É¾°ü
-	ClearRAM((u8*)mqttSenddataString,200);         //É¾°ü
+	MQTT_DeleteBuffer(&mqttPacket);										//åˆ åŒ…
+	ClearRAM((u8*)mqttSenddataString,200);         //åˆ åŒ…
 	
 	return 0;
 
 }
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	OneNet_HeartBeat_Check
+//	å‡½æ•°åç§°ï¼š	OneNet_HeartBeat_Check
 //
-//	º¯Êı¹¦ÄÜ£º	·¢ËÍĞÄÌøºóµÄĞÄÌø¼ì²â
+//	å‡½æ•°åŠŸèƒ½ï¼š	å‘é€å¿ƒè·³åçš„å¿ƒè·³æ£€æµ‹
 //
-//	Èë¿Ú²ÎÊı£º	ÎŞ
+//	å…¥å£å‚æ•°ï¼š	æ— 
 //
-//	·µ»Ø²ÎÊı£º	0-³É¹¦	1-µÈ´ı
+//	è¿”å›å‚æ•°ï¼š	0-æˆåŠŸ	1-ç­‰å¾…
 //
-//	ËµÃ÷£º		»ùÓÚµ÷ÓÃÊ±»ù£¬runCountÃ¿¸ô´Ëº¯Êıµ÷ÓÃÒ»´ÎµÄÊ±¼ä×ÔÔö
-//				´ïµ½Éè¶¨ÉÏÏŞ¼ì²âĞÄÌø±êÖ¾Î»ÊÇ·ñ¾ÍĞ÷
-//				ÉÏÏŞÊ±¼ä¿ÉÒÔ²»ÓÃÌ«¾«È·
+//	è¯´æ˜ï¼š		åŸºäºè°ƒç”¨æ—¶åŸºï¼ŒrunCountæ¯éš”æ­¤å‡½æ•°è°ƒç”¨ä¸€æ¬¡çš„æ—¶é—´è‡ªå¢
+//				è¾¾åˆ°è®¾å®šä¸Šé™æ£€æµ‹å¿ƒè·³æ ‡å¿—ä½æ˜¯å¦å°±ç»ª
+//				ä¸Šé™æ—¶é—´å¯ä»¥ä¸ç”¨å¤ªç²¾ç¡®
 //==========================================================
 _Bool OneNet_Check_Heart(void)
 {
@@ -113,14 +113,14 @@ _Bool OneNet_Check_Heart(void)
 		return 0;
 	}
 	
-	if(++runCount >= 40)           //ĞÄÌøÍ£Ö¹ÀÛ¼Æ40¸öÖÜÆÚ
+	if(++runCount >= 40)           //å¿ƒè·³åœæ­¢ç´¯è®¡40ä¸ªå‘¨æœŸ
 	{
 		runCount = 0;
 		
 		UsartPrintf(USART_DEBUG, "HeartBeat TimeOut: %d\r\n", errCount);
-		OneNET_SendData_Heart();		//ÔÙ´Î·¢ËÍĞÄÌøÇëÇó
+		OneNET_SendData_Heart();		//å†æ¬¡å‘é€å¿ƒè·³è¯·æ±‚
 		
-		if(++errCount >= 3)         //ĞÄÌøÍ£Ö¹ÖØ·¢ÀÛ¼Æ3´Î
+		if(++errCount >= 3)         //å¿ƒè·³åœæ­¢é‡å‘ç´¯è®¡3æ¬¡
 		{
 			unsigned char errType = 0;
 			
@@ -128,13 +128,13 @@ _Bool OneNet_Check_Heart(void)
 			
 			UsartPrintf(USART_DEBUG, "NET_DEVICE_Check_needed\r\n");
 			
-//			errType = NET_DEVICE_Check();											//ÍøÂçÉè±¸×´Ì¬¼ì²é
+//			errType = NET_DEVICE_Check();											//ç½‘ç»œè®¾å¤‡çŠ¶æ€æ£€æŸ¥
 //			if(errType == CHECK_CONNECTED || errType == CHECK_CLOSED || errType == CHECK_GOT_IP)
-//				faultTypeReport = faultType = FAULT_PRO;								//±ê¼ÇÎªĞ­Òé´íÎó
+//				faultTypeReport = faultType = FAULT_PRO;								//æ ‡è®°ä¸ºåè®®é”™è¯¯
 //			else if(errType == CHECK_NO_DEVICE)
-//				faultTypeReport = faultType = FAULT_NODEVICE;							//±ê¼ÇÎªÉè±¸´íÎó
+//				faultTypeReport = faultType = FAULT_NODEVICE;							//æ ‡è®°ä¸ºè®¾å¤‡é”™è¯¯
 //			else
-//				faultTypeReport = faultType = FAULT_NONE;								//ÎŞ´íÎó
+//				faultTypeReport = faultType = FAULT_NONE;								//æ— é”™è¯¯
 		}
 	}
 	
@@ -143,24 +143,24 @@ _Bool OneNet_Check_Heart(void)
 }
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	OneNet_DevLink
+//	å‡½æ•°åç§°ï¼š	OneNet_DevLink
 //
-//	º¯Êı¹¦ÄÜ£º	Óëonenet´´½¨Á¬½Ó
+//	å‡½æ•°åŠŸèƒ½ï¼š	ä¸onenetåˆ›å»ºè¿æ¥
 //
-//	Èë¿Ú²ÎÊı£º	ÎŞ
+//	å…¥å£å‚æ•°ï¼š	æ— 
 //
-//	·µ»Ø²ÎÊı£º	1-Ê§°Ü	0-³É¹¦
+//	è¿”å›å‚æ•°ï¼š	1-å¤±è´¥	0-æˆåŠŸ
 //
-//	ËµÃ÷£º		ÓëonenetÆ½Ì¨½¨Á¢Á¬½Ó
+//	è¯´æ˜ï¼š		ä¸onenetå¹³å°å»ºç«‹è¿æ¥
 //==========================================================
 _Bool OneNet_DevLink(void)
 {
 	
-    MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0};					//Ğ­Òé°ü
+    MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0};					//åè®®åŒ…
 		
-		unsigned char mqttSenddataString[200];//×ªÎªASCIIÂë×Ö·û´®ºó£¬×Ö·û´®µÄ»º´æ
+		unsigned char mqttSenddataString[200];//è½¬ä¸ºASCIIç å­—ç¬¦ä¸²åï¼Œå­—ç¬¦ä¸²çš„ç¼“å­˜
 		
-		unsigned char mqttRevdatahex[200];//½ÓÊÜµÄ×Ö·û´®×ª»¯Îª16½øÖÆÊı×é
+		unsigned char mqttRevdatahex[200];//æ¥å—çš„å­—ç¬¦ä¸²è½¬åŒ–ä¸º16è¿›åˆ¶æ•°ç»„
 
     unsigned char *dataPtr;
 
@@ -185,7 +185,7 @@ _Bool OneNet_DevLink(void)
 			
 				if(BC35_GetNSONMI(250))
 				{
-					 dataPtr = BC35_GetDATA(250);								//µÈ´ıÆ½Ì¨ÏìÓ¦
+					 dataPtr = BC35_GetDATA(250);								//ç­‰å¾…å¹³å°å“åº”
 				}				
 
         UsartPrintf(USART_DEBUG, (char *)dataPtr);				
@@ -198,22 +198,22 @@ _Bool OneNet_DevLink(void)
 						{
 							switch(MQTT_UnPacketConnectAck(mqttRevdatahex))
 							{
-								case 0:UsartPrintf(USART_DEBUG, "Tips:	Á¬½Ó³É¹¦\r\n");status = 0;break;
+								case 0:UsartPrintf(USART_DEBUG, "Tips:	è¿æ¥æˆåŠŸ\r\n");status = 0;break;
 								
-								case 1:UsartPrintf(USART_DEBUG, "WARN:	Á¬½ÓÊ§°Ü£ºĞ­Òé´íÎó\r\n");break;
-								case 2:UsartPrintf(USART_DEBUG, "WARN:	Á¬½ÓÊ§°Ü£º·Ç·¨µÄclientid\r\n");break;
-								case 3:UsartPrintf(USART_DEBUG, "WARN:	Á¬½ÓÊ§°Ü£º·şÎñÆ÷Ê§°Ü\r\n");break;
-								case 4:UsartPrintf(USART_DEBUG, "WARN:	Á¬½ÓÊ§°Ü£ºÓÃ»§Ãû»òÃÜÂë´íÎó\r\n");break;
-								case 5:UsartPrintf(USART_DEBUG, "WARN:	Á¬½ÓÊ§°Ü£º·Ç·¨Á´½Ó(±ÈÈçtoken·Ç·¨)\r\n");break;
+								case 1:UsartPrintf(USART_DEBUG, "WARN:	è¿æ¥å¤±è´¥ï¼šåè®®é”™è¯¯\r\n");break;
+								case 2:UsartPrintf(USART_DEBUG, "WARN:	è¿æ¥å¤±è´¥ï¼šéæ³•çš„clientid\r\n");break;
+								case 3:UsartPrintf(USART_DEBUG, "WARN:	è¿æ¥å¤±è´¥ï¼šæœåŠ¡å™¨å¤±è´¥\r\n");break;
+								case 4:UsartPrintf(USART_DEBUG, "WARN:	è¿æ¥å¤±è´¥ï¼šç”¨æˆ·åæˆ–å¯†ç é”™è¯¯\r\n");break;
+								case 5:UsartPrintf(USART_DEBUG, "WARN:	è¿æ¥å¤±è´¥ï¼šéæ³•é“¾æ¥(æ¯”å¦‚tokenéæ³•)\r\n");break;
 								
-								default:UsartPrintf(USART_DEBUG, "ERR:	Á¬½ÓÊ§°Ü£ºÎ´Öª´íÎó\r\n");break;
+								default:UsartPrintf(USART_DEBUG, "ERR:	è¿æ¥å¤±è´¥ï¼šæœªçŸ¥é”™è¯¯\r\n");break;
 							}
 						}
         }
 
-        MQTT_DeleteBuffer(&mqttPacket);								//É¾°ü
-				ClearRAM((u8*)mqttSenddataString,200);         //É¾°ü
-				ClearRAM((u8*)mqttRevdatahex,200);         //É¾°ü
+        MQTT_DeleteBuffer(&mqttPacket);								//åˆ åŒ…
+				ClearRAM((u8*)mqttSenddataString,200);         //åˆ åŒ…
+				ClearRAM((u8*)mqttRevdatahex,200);         //åˆ åŒ…
     }
     else
         UsartPrintf(USART_DEBUG, "WARN:	MQTT_PacketConnect Failed\r\n");
@@ -252,11 +252,11 @@ unsigned char OneNet_FillBuf(char *buf)
     memset(text, 0, sizeof(text));
     sprintf(text, "{\"id\":\"Temp\",\"datapoints\":[{\"value\":%d}]},",DHT11_Data.temp_int);
     strcat(buf, text);
-    //		//LEDµÆ¿ØÖÆ
+    //		//LEDç¯æ§åˆ¶
     //	memset(text, 0, sizeof(text));
     //	sprintf(text, "{\"id\":\"LED\",\"datapoints\":[{\"value\":%d}]},",1);
     //	strcat(buf, text);
-    //GPSµÄÊı¾İ
+    //GPSçš„æ•°æ®
     memset(text, 0, sizeof(text));
     sprintf(text, "{\"id\":\"GPS\",\"datapoints\":[{\"value\":{\"lon\":%s,\"lat\":%s}}]}","116.3972282","39.909604");
     strcat(buf, text);
@@ -268,20 +268,20 @@ unsigned char OneNet_FillBuf(char *buf)
 }
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	OneNet_SendData
+//	å‡½æ•°åç§°ï¼š	OneNet_SendData
 //
-//	º¯Êı¹¦ÄÜ£º	ÉÏ´«Êı¾İµ½Æ½Ì¨
+//	å‡½æ•°åŠŸèƒ½ï¼š	ä¸Šä¼ æ•°æ®åˆ°å¹³å°
 //
-//	Èë¿Ú²ÎÊı£º	type£º·¢ËÍÊı¾İµÄ¸ñÊ½
+//	å…¥å£å‚æ•°ï¼š	typeï¼šå‘é€æ•°æ®çš„æ ¼å¼
 //
-//	·µ»Ø²ÎÊı£º	ÎŞ
+//	è¿”å›å‚æ•°ï¼š	æ— 
 //
-//	ËµÃ÷£º		
+//	è¯´æ˜ï¼š		
 //==========================================================
 void OneNet_SendData(void)
 {
 
-    MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0};												//Ğ­Òé°ü
+    MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0};												//åè®®åŒ…
 
     char buf[500];
     char bufhex[500];
@@ -291,21 +291,21 @@ void OneNet_SendData(void)
 
     memset(buf, 0, sizeof(buf));
     memset(bufhex, 0, sizeof(bufhex));
-    body_len = OneNet_FillBuf(buf);																	//»ñÈ¡µ±Ç°ĞèÒª·¢ËÍµÄÊı¾İÁ÷µÄ×Ü³¤¶È
+    body_len = OneNet_FillBuf(buf);																	//è·å–å½“å‰éœ€è¦å‘é€çš„æ•°æ®æµçš„æ€»é•¿åº¦
     UsartPrintf(USART_DEBUG, buf);
     DelayXms(500);
     if(body_len)
     {
-        if(MQTT_PacketSaveData(DEVID, body_len, NULL, 1, &mqttPacket) == 0)							//·â°ü
+        if(MQTT_PacketSaveData(DEVID, body_len, NULL, 1, &mqttPacket) == 0)							//å°åŒ…
         {
             for(;i < body_len; i++)
                 mqttPacket._data[mqttPacket._len++] = buf[i];
             mqtt_SendData_message(bufhex,buf,body_len);
             UsartPrintf(USART_DEBUG, "bufhex:%s\r\n", bufhex);
             DelayXms(500);
-           // BC35_SendData((u8 *)bufhex,strlen((const char*)bufhex)/2);										//ÉÏ´«Êı¾İµ½Æ½Ì¨
+           // BC35_SendData((u8 *)bufhex,strlen((const char*)bufhex)/2);										//ä¸Šä¼ æ•°æ®åˆ°å¹³å°
             UsartPrintf(USART_DEBUG, "Send %d Bytes\r\n", mqttPacket._len);
-            MQTT_DeleteBuffer(&mqttPacket);															//É¾°ü
+            MQTT_DeleteBuffer(&mqttPacket);															//åˆ åŒ…
         }
         else
             UsartPrintf(USART_DEBUG, "WARN:	MQTT_NewBuffer Failed\r\n");
@@ -314,25 +314,25 @@ void OneNet_SendData(void)
 }
 
 //==========================================================
-//	º¯ÊıÃû³Æ£º	OneNet_RevPro
+//	å‡½æ•°åç§°ï¼š	OneNet_RevPro
 //
-//	º¯Êı¹¦ÄÜ£º	Æ½Ì¨·µ»ØÊı¾İ¼ì²â
+//	å‡½æ•°åŠŸèƒ½ï¼š	å¹³å°è¿”å›æ•°æ®æ£€æµ‹
 //
-//	Èë¿Ú²ÎÊı£º	dataPtr£ºÆ½Ì¨·µ»ØµÄÊı¾İ
+//	å…¥å£å‚æ•°ï¼š	dataPtrï¼šå¹³å°è¿”å›çš„æ•°æ®
 //
-//	·µ»Ø²ÎÊı£º	ÎŞ
+//	è¿”å›å‚æ•°ï¼š	æ— 
 //
-//	ËµÃ÷£º		
+//	è¯´æ˜ï¼š		
 //==========================================================
 void OneNet_RevPro(unsigned char *cmd)
 {
 
-    MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0};								//Ğ­Òé°ü
+    MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0};								//åè®®åŒ…
 
     char *req_payload = NULL;
     char *cmdid_topic = NULL;
 		
-		unsigned char mqttSenddataString[200];//×ªÎªASCIIÂë×Ö·û´®ºó£¬×Ö·û´®µÄ»º´æ
+		unsigned char mqttSenddataString[200];//è½¬ä¸ºASCIIç å­—ç¬¦ä¸²åï¼Œå­—ç¬¦ä¸²çš„ç¼“å­˜
 		
     unsigned short req_len = 0;
 
@@ -357,14 +357,14 @@ void OneNet_RevPro(unsigned char *cmd)
 		
 				break;
 		
-    case MQTT_PKT_CMD:															//ÃüÁîÏÂ·¢
+    case MQTT_PKT_CMD:															//å‘½ä»¤ä¸‹å‘
 
-        result = MQTT_UnPacketCmd(cmd, &cmdid_topic, &req_payload, &req_len);	//½â³ötopicºÍÏûÏ¢Ìå
+        result = MQTT_UnPacketCmd(cmd, &cmdid_topic, &req_payload, &req_len);	//è§£å‡ºtopicå’Œæ¶ˆæ¯ä½“
         if(result == 0)
         {
             UsartPrintf(USART_DEBUG, "cmdid: %s, req: %s, req_len: %d\r\n", cmdid_topic, req_payload, req_len);
 
-            if(MQTT_PacketCmdResp(cmdid_topic, req_payload, &mqttPacket) == 0)	//ÃüÁî»Ø¸´×é°ü
+            if(MQTT_PacketCmdResp(cmdid_topic, req_payload, &mqttPacket) == 0)	//å‘½ä»¤å›å¤ç»„åŒ…
             {
 
 							  UsartPrintf(USART_DEBUG, "Yuanshi_mqttPacket._len=%d\r\n",mqttPacket._len);
@@ -383,15 +383,15 @@ void OneNet_RevPro(unsigned char *cmd)
 //					 UsartPrintf(USART_DEBUG,"mqttPacketdataHEX[%d] = %c\r\n", i,mqttPacketdataHEX[i]);
 //					}
 					
-                BC35_SENDDATA(mqttSenddataString, (mqttPacket._len)*2);				//»Ø¸´ÃüÁî
-							  ClearRAM((u8*)mqttSenddataString,200);//É¾°ü
-                MQTT_DeleteBuffer(&mqttPacket);									//É¾°ü
+                BC35_SENDDATA(mqttSenddataString, (mqttPacket._len)*2);				//å›å¤å‘½ä»¤
+							  ClearRAM((u8*)mqttSenddataString,200);//åˆ åŒ…
+                MQTT_DeleteBuffer(&mqttPacket);									//åˆ åŒ…
             }
         }
 
         break;
 
-		case MQTT_PKT_PUBACK:														//·¢ËÍPublishÏûÏ¢£¬Æ½Ì¨»Ø¸´µÄAck
+		case MQTT_PKT_PUBACK:														//å‘é€Publishæ¶ˆæ¯ï¼Œå¹³å°å›å¤çš„Ack
 
                     if(MQTT_UnPacketPublishAck(cmd) == 0)
                         UsartPrintf(USART_DEBUG, "Tips:	MQTT Publish Send OK\r\n");
@@ -403,7 +403,7 @@ void OneNet_RevPro(unsigned char *cmd)
                     break;
                 }
 
-    BC35_Clear();										//Çå¿Õ»º´æ
+    BC35_Clear();										//æ¸…ç©ºç¼“å­˜
 								
 	
 
@@ -412,18 +412,18 @@ void OneNet_RevPro(unsigned char *cmd)
 
 
 		
-    dataPtr = strchr(req_payload, '{');					//ËÑË÷'}'
+    dataPtr = strchr(req_payload, '{');					//æœç´¢'}'
 
-    if(dataPtr != NULL && result != -1)					//Èç¹ûÕÒµ½ÁË
+    if(dataPtr != NULL && result != -1)					//å¦‚æœæ‰¾åˆ°äº†
     {
         dataPtr++;
 
-        while(*dataPtr >= '0' && *dataPtr <= '9')		//ÅĞ¶ÏÊÇ·ñÊÇÏÂ·¢µÄÃüÁî¿ØÖÆÊı¾İ
+        while(*dataPtr >= '0' && *dataPtr <= '9')		//åˆ¤æ–­æ˜¯å¦æ˜¯ä¸‹å‘çš„å‘½ä»¤æ§åˆ¶æ•°æ®
         {
             numBuf[num++] = *dataPtr++;
         }
 
-        num = atoi((const char *)numBuf);				//×ªÎªÊıÖµĞÎÊ½
+        num = atoi((const char *)numBuf);				//è½¬ä¸ºæ•°å€¼å½¢å¼
 				
 				
     }
@@ -433,20 +433,20 @@ void OneNet_RevPro(unsigned char *cmd)
 		
 		
 		
-		if(strstr((char *)req_payload, "redled"))		//ËÑË÷"redled"
+		if(strstr((char *)req_payload, "redled"))		//æœç´¢"redled"
 		{
-			if(num == 1)								//¿ØÖÆÊı¾İÈç¹ûÎª1£¬´ú±í¿ª
+			if(num == 1)								//æ§åˆ¶æ•°æ®å¦‚æœä¸º1ï¼Œä»£è¡¨å¼€
 			{
 //				Led4_Set(LED_ON);
 				UsartPrintf(USART_DEBUG, "Led4_Set(LED_ON)");
 			}
-			else if(num == 0)							//¿ØÖÆÊı¾İÈç¹ûÎª0£¬´ú±í¹Ø
+			else if(num == 0)							//æ§åˆ¶æ•°æ®å¦‚æœä¸º0ï¼Œä»£è¡¨å…³
 			{
 //				Led4_Set(LED_OFF);
 				UsartPrintf(USART_DEBUG, "Led4_Set(LED_OFF)");
 			}
 		}
-														//ÏÂÍ¬
+														//ä¸‹åŒ
 		else if(strstr((char *)req_payload, "greenled"))
 		{
 			if(num == 1)
