@@ -53,10 +53,10 @@ int Str2Hex(char *str,char *hex)
     *hex = '\0';
     return 0;
 }
-//¹¹½¨MQTTÁ¬½Ó°ü 
+//æž„å»ºMQTTè¿žæŽ¥åŒ… 
 u16 mqtt_connect_message(char *mqtt_message,char *PROID,char *AUTH_INFO,char *DEVID)
 {
-    //	char HTTP_Buf[400];     //HTTP±¨ÎÄ»º´æÇø
+    //	char HTTP_Buf[400];     //HTTPæŠ¥æ–‡ç¼“å­˜åŒº
     char str[500];
     char strHEX[500];
     u16 PROID_length = strlen(PROID);
@@ -64,9 +64,9 @@ u16 mqtt_connect_message(char *mqtt_message,char *PROID,char *AUTH_INFO,char *DE
     u16 AUTH_INFO_length = strlen(AUTH_INFO);
     u16 MQTT_length = strlen("MQTT");
     u16 packetLen;
-    ClearRAM((u8*)str,200);   //Çå¿ÕcommandATÊý¾Ý°ü»º´æ£¬·¢ËÍÃüÁî°üº¬ip¶Ë¿ÚºÍ³¤¶È
-    ClearRAM((u8*)strHEX,200); //Çå¿ÕlocationHexÊý¾Ý°ü»º´æ£¬×ª»»Îªhex ÐèÒª·¢ËÍµÄÕæÊµÊý¾Ý
-    packetLen = 12;//¹Ì¶¨µÄÊý¾ÝÍ·³¤¶È
+    ClearRAM((u8*)str,200);   //æ¸…ç©ºcommandATæ•°æ®åŒ…ç¼“å­˜ï¼Œå‘é€å‘½ä»¤åŒ…å«ipç«¯å£å’Œé•¿åº¦
+    ClearRAM((u8*)strHEX,200); //æ¸…ç©ºlocationHexæ•°æ®åŒ…ç¼“å­˜ï¼Œè½¬æ¢ä¸ºhex éœ€è¦å‘é€çš„çœŸå®žæ•°æ®
+    packetLen = 12;//å›ºå®šçš„æ•°æ®å¤´é•¿åº¦
     if(PROID_length > 0)
         packetLen = packetLen + 2 + PROID_length;
     if(DEVID_length > 0)
@@ -78,10 +78,10 @@ u16 mqtt_connect_message(char *mqtt_message,char *PROID,char *AUTH_INFO,char *DE
     sprintf(strHEX,"%02x",(packetLen-2));
 
     strcat(mqtt_message,strHEX);
-    ClearRAM((u8*)str,200);   //Çå¿ÕcommandATÊý¾Ý°ü»º´æ£¬·¢ËÍÃüÁî°üº¬ip¶Ë¿ÚºÍ³¤¶È
-    ClearRAM((u8*)strHEX,200); //Çå¿ÕlocationHexÊý¾Ý°ü»º´æ£¬×ª»»Îªhex ÐèÒª·¢ËÍµÄÕæÊµÊý¾Ý
+    ClearRAM((u8*)str,200);   //æ¸…ç©ºcommandATæ•°æ®åŒ…ç¼“å­˜ï¼Œå‘é€å‘½ä»¤åŒ…å«ipç«¯å£å’Œé•¿åº¦
+    ClearRAM((u8*)strHEX,200); //æ¸…ç©ºlocationHexæ•°æ®åŒ…ç¼“å­˜ï¼Œè½¬æ¢ä¸ºhex éœ€è¦å‘é€çš„çœŸå®žæ•°æ®
     strcat(mqtt_message,"00044D51545404C00100");
-    //×°ÔØÉè±¸IDµ½Êý¾Ý°ü		
+    //è£…è½½è®¾å¤‡IDåˆ°æ•°æ®åŒ…		
     sprintf(str, "%02x%02x",((0xff00&(DEVID_length))>>8),(0xff&DEVID_length));
     strcat(mqtt_message,str);
     ClearRAM((u8*)str,200);
@@ -90,7 +90,7 @@ u16 mqtt_connect_message(char *mqtt_message,char *PROID,char *AUTH_INFO,char *DE
     strcat(mqtt_message,strHEX);
     ClearRAM((u8*)str,200);
     ClearRAM((u8*)strHEX,200);
-    //×°ÔØ²úÆ·IDµ½Êý¾Ý°ü
+    //è£…è½½äº§å“IDåˆ°æ•°æ®åŒ…
     sprintf(str, "%02x%02x",((0xff00&(PROID_length))>>8),(0xff&PROID_length));
     strcat(mqtt_message,str);
     ClearRAM((u8*)str,200);
@@ -99,7 +99,7 @@ u16 mqtt_connect_message(char *mqtt_message,char *PROID,char *AUTH_INFO,char *DE
     strcat(mqtt_message,strHEX);
     ClearRAM((u8*)str,200);
     ClearRAM((u8*)strHEX,200);
-    //×°ÔØ¼øÈ¨ÐÅÏ¢µ½Êý¾Ý°ü
+    //è£…è½½é‰´æƒä¿¡æ¯åˆ°æ•°æ®åŒ…
     sprintf(str, "%02x%02x",((0xff00&(AUTH_INFO_length))>>8),(0xff&AUTH_INFO_length));
     strcat(mqtt_message,str);
     ClearRAM((u8*)str,200);
@@ -113,7 +113,7 @@ u16 mqtt_connect_message(char *mqtt_message,char *PROID,char *AUTH_INFO,char *DE
     strcat(mqtt_message,"\r\n");
     return packetLen;
 }
-//¹¹½¨MQTTÊý¾Ý°ü 
+//æž„å»ºMQTTæ•°æ®åŒ… 
 u16 mqtt_SendData_message(char *mqtt_messageHEX,char *SendData,short length)
 {
     char str[200];
@@ -125,11 +125,11 @@ u16 mqtt_SendData_message(char *mqtt_messageHEX,char *SendData,short length)
     sprintf(strHEX,"%02x",(packetLen));
     strcat(mqtt_messageHEX,strHEX);
 	
-    ClearRAM((u8*)str,200);   //Çå¿ÕcommandATÊý¾Ý°ü»º´æ£¬·¢ËÍÃüÁî°üº¬ip¶Ë¿ÚºÍ³¤¶È
-    ClearRAM((u8*)strHEX,200); //Çå¿ÕlocationHexÊý¾Ý°ü»º´æ£¬×ª»»Îªhex ÐèÒª·¢ËÍµÄÕæÊµÊý¾Ý
+    ClearRAM((u8*)str,200);   //æ¸…ç©ºcommandATæ•°æ®åŒ…ç¼“å­˜ï¼Œå‘é€å‘½ä»¤åŒ…å«ipç«¯å£å’Œé•¿åº¦
+    ClearRAM((u8*)strHEX,200); //æ¸…ç©ºlocationHexæ•°æ®åŒ…ç¼“å­˜ï¼Œè½¬æ¢ä¸ºhex éœ€è¦å‘é€çš„çœŸå®žæ•°æ®
     
 	  strcat(mqtt_messageHEX,"01000324647001");
-    //×°ÔØjsonÊý¾Ýµ½Êý¾Ý°ü
+    //è£…è½½jsonæ•°æ®åˆ°æ•°æ®åŒ…
     sprintf(str, "%02x%02x",((0xff00&(SendData_length))>>8),(0xff&SendData_length));
     strcat(mqtt_messageHEX,str);
 	
