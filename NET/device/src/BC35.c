@@ -38,7 +38,7 @@
 #define BC35_ONENET_INFO "AT+NSOCO=1,183.230.40.39,6002\r\n"  //"AT+IPSTART=\"TCP\",\"183.230.40.39\",6002\r\n"
 
 
-unsigned char BC35_buf[128];        //接收模块的反馈信息
+unsigned char BC35_buf[200];        //接收模块的反馈信息
 unsigned short BC35_cnt = 0, BC35_cntPre = 0;
 
 
@@ -392,7 +392,7 @@ unsigned char *BC35_GetDATA(unsigned short timeOut)
 							while(token != NULL&&i < 4)
 							{
 								i++;
-								UsartPrintf(USART_DEBUG,(char *)token);
+//								UsartPrintf(USART_DEBUG,(char *)token);
 								token = strtok(NULL,",");																
 							}
 							

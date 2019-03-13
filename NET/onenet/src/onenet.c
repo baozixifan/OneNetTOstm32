@@ -47,26 +47,101 @@
 
 #define DEVID		"508860545"
 
+unsigned char heart_beat = 0; //心跳
+unsigned char errCount = 0;   //错误计数
+//unsigned char sendData = 0;   //发送数据类型
+extern unsigned char BC35_buf[200];
 
-extern unsigned char BC35_buf[128];
+//==========================================================
+//	函数名称：	OneNET_SendData_Heart
+//
+//	函数功能：	心跳检测
+//
+//	入口参数：	无
+//
+//	返回参数：	0-发送成功	；SEND_TYPE_HEART-需要重送
+//
+//	说明：		
+//==========================================================
+unsigned char OneNET_SendData_Heart(void)
+{
+	
+	MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0};					//协议包
+	unsigned char mqttSenddataString[200];//转为ASCII码字符串后，字符串的缓存
+	
+	
+	if(MQTT_PacketPing(&mqttPacket))
+		return SEND_TYPE_HEART;
+	
+	heart_beat = 0;
 
-//u8 http_len=0;
-//void hextostr(uint8 *pkt,uint8 *data,uint32 len)
-//{
-//    u8 i;
-//    *pkt = 0;
-//    for(i=0;i<len;i++)
-//    {
-//        if(data[i]/16<10)
-//            pkt[2*i]=data[i]/16+0x30;
-//        else
-//            pkt[2*i]=data[i]/16+0x37;
-//        if(data[i]%16<10)
-//            pkt[2*i+1]=data[i]%16+0x30;
-//        else
-//            pkt[2*i+1]=data[i]%16+0x37;
-//    }
-//}
+  HexArrayToString(mqttPacket._data, mqttPacket._len, mqttSenddataString);	
+	BC35_SENDDATA(mqttSenddataString, (mqttPacket._len)*2);			//向平台上传心跳请求
+//	NET_DEVICE_AddDataSendList(mqttPacket._data, mqttPacket._len, 0);	//加入链表
+	
+	MQTT_DeleteBuffer(&mqttPacket);										//删包
+	ClearRAM((u8*)mqttSenddataString,200);         //删包
+	
+	return 0;
+
+}
+
+//==========================================================
+//	函数名称：	OneNet_HeartBeat_Check
+//
+//	函数功能：	发送心跳后的心跳检测
+//
+//	入口参数：	无
+//
+//	返回参数：	0-成功	1-等待
+//
+//	说明：		基于调用时基，runCount每隔此函数调用一次的时间自增
+//				达到设定上限检测心跳标志位是否就绪
+//				上限时间可以不用太精确
+//==========================================================
+_Bool OneNet_Check_Heart(void)
+{
+	
+	static unsigned char runCount = 0;
+	
+
+	if(heart_beat == 1)
+	{
+		runCount = 0;
+		errCount = 0;
+		
+		return 0;
+	}
+	
+	if(++runCount >= 40)           //心跳停止累计40个周期
+	{
+		runCount = 0;
+		
+		UsartPrintf(USART_DEBUG, "HeartBeat TimeOut: %d\r\n", errCount);
+		OneNET_SendData_Heart();		//再次发送心跳请求
+		
+		if(++errCount >= 3)         //心跳停止重发累计3次
+		{
+			unsigned char errType = 0;
+			
+			errCount = 0;
+			
+			UsartPrintf(USART_DEBUG, "NET_DEVICE_Check_needed\r\n");
+			
+//			errType = NET_DEVICE_Check();											//网络设备状态检查
+//			if(errType == CHECK_CONNECTED || errType == CHECK_CLOSED || errType == CHECK_GOT_IP)
+//				faultTypeReport = faultType = FAULT_PRO;								//标记为协议错误
+//			else if(errType == CHECK_NO_DEVICE)
+//				faultTypeReport = faultType = FAULT_NODEVICE;							//标记为设备错误
+//			else
+//				faultTypeReport = faultType = FAULT_NONE;								//无错误
+		}
+	}
+	
+	return 1;
+
+}
+
 //==========================================================
 //	函数名称：	OneNet_DevLink
 //
@@ -138,6 +213,7 @@ _Bool OneNet_DevLink(void)
 
         MQTT_DeleteBuffer(&mqttPacket);								//删包
 				ClearRAM((u8*)mqttSenddataString,200);         //删包
+				ClearRAM((u8*)mqttRevdatahex,200);         //删包
     }
     else
         UsartPrintf(USART_DEBUG, "WARN:	MQTT_PacketConnect Failed\r\n");
@@ -273,6 +349,14 @@ void OneNet_RevPro(unsigned char *cmd)
 		
     switch(type)
     {
+			
+		case MQTT_PKT_PINGRESP:
+	
+				UsartPrintf(USART_DEBUG, "Tips:	HeartBeat OK\r\n");
+				heart_beat = 1;
+		
+				break;
+		
     case MQTT_PKT_CMD:															//命令下发
 
         result = MQTT_UnPacketCmd(cmd, &cmdid_topic, &req_payload, &req_len);	//解出topic和消息体
