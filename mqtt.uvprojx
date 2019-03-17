@@ -149,7 +149,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>12</TargetSelection>
+          <TargetSelection>1</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -163,7 +163,7 @@
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
             <InitializationFile></InitializationFile>
-            <Driver>BIN\CMSIS_AGDI.dll</Driver>
+            <Driver>BIN\UL2CM3.DLL</Driver>
           </TargetDlls>
         </DebugOption>
         <Utilities>
@@ -177,7 +177,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -466,6 +466,11 @@
               <FileName>stm32f10x_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\fwlib\src\stm32f10x_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\fwlib\src\stm32f10x_adc.c</FilePath>
             </File>
           </Files>
         </Group>
