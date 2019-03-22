@@ -70,7 +70,7 @@ void Hardware_Init(void)
 	
     Beep_Init();					//蜂鸣器初始化
 	
-	  TIM3_Int_Init(4999,7199);//定时器初始化，10Khz的计数频率，计数到5000为500ms
+	  TIM3_Int_Init(19999,35999);//定时器初始化，2Khz的计数频率，计数到20000为10s
 
     UsartPrintf(USART_DEBUG, " Hardware init OK\r\n");
 
@@ -99,12 +99,15 @@ void Hardware_Init(void)
 */
 int main(void)
 {
+		const char *topics[] = {"LedPwm_topic"};
 
     unsigned short timeCount = 0;	//发送间隔变量
 
     unsigned char *dataPtr = NULL;
 	
 	  unsigned char timecount = 0;
+		
+		unsigned char send_heart_once = 1;
 	
 //	  unsigned char mqttPacketdataHEX[200];//转为16进制数组后，数组的缓存
 	
@@ -121,7 +124,7 @@ int main(void)
     DelayXms(250);
     Beep_Set(BEEP_OFF);
 		
-		OneNET_SendData_Heart();
+		OneNet_Subscribe(topics, 1);
 
     while(1)
     {
@@ -134,9 +137,9 @@ int main(void)
 				if(OneNet_Check_Heart())
 				{
 					//心跳停止
-					UsartPrintf(USART_DEBUG, "OneNET_SendData_Heart_false");
+					UsartPrintf(USART_DEBUG, "Heart_false\r\n");
 				}
-				if(timecount >= 20)
+				if(timecount >= 8)
 				{
 					timecount = 0;
 					OneNET_SendData_Heart();				
@@ -169,6 +172,13 @@ int main(void)
 				TIM_Cmd(TIM3, ENABLE);  //使能TIMx外设
 			}
         DelayXms(10);
+			
+			//拙劣的手法解决开始先有8个Heart_false的bug
+			if(send_heart_once)
+			{
+				send_heart_once = 0;
+				OneNET_SendData_Heart();
+			}
 			
 			
 	

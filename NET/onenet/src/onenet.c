@@ -52,6 +52,46 @@ unsigned char errCount = 0;   //错误计数
 //unsigned char sendData = 0;   //发送数据类型
 extern unsigned char BC35_buf[200];
 
+
+
+//==========================================================
+//	函数名称：	OneNet_Subscribe
+//
+//	函数功能：	订阅
+//
+//	入口参数：	topics：订阅的topic
+//				topic_cnt：topic个数
+//
+//	返回参数：	0-成功	SEND_TYPE_SUBSCRIBE-需要重发
+//
+//	说明：		
+//==========================================================
+unsigned char OneNet_Subscribe(const char *topics[], unsigned char topic_cnt)
+{
+	
+	unsigned char i = 0;
+	
+	MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0};							//协议包
+  unsigned char mqttSenddataString[200];//转为ASCII码字符串后，字符串的缓存
+	
+	for(; i < topic_cnt; i++)
+		UsartPrintf(USART_DEBUG, "Subscribe Topic: %s\r\n", topics[i]);
+	
+	if(MQTT_PacketSubscribe(MQTT_SUBSCRIBE_ID, MQTT_QOS_LEVEL2, topics, topic_cnt, &mqttPacket) == 0)
+	{
+			HexArrayToString(mqttPacket._data, mqttPacket._len, mqttSenddataString);	
+			BC35_SENDDATA(mqttSenddataString, (mqttPacket._len)*2);			//向平台上传心跳请求
+		//	NET_DEVICE_AddDataSendList(mqttPacket._data, mqttPacket._len, 0);	//加入链表
+			
+			MQTT_DeleteBuffer(&mqttPacket);										//删包
+			ClearRAM((u8*)mqttSenddataString,200);         //删包
+	}
+	
+	return 0;
+
+}
+
+
 //==========================================================
 //	函数名称：	OneNET_SendData_Heart
 //
@@ -334,9 +374,12 @@ void OneNet_RevPro(unsigned char *cmd)
 		
 		unsigned char mqttSenddataString[200];//转为ASCII码字符串后，字符串的缓存
 		
+		unsigned short topic_len = 0;
     unsigned short req_len = 0;
 
     unsigned char type = 0;
+		unsigned char qos = 0;
+		static unsigned short pkt_id = 0;
 
     short result = 0;
 
@@ -350,7 +393,7 @@ void OneNet_RevPro(unsigned char *cmd)
     switch(type)
     {
 			
-		case MQTT_PKT_PINGRESP:
+		case MQTT_PKT_PINGRESP:   //接收到心跳包
 	
 				UsartPrintf(USART_DEBUG, "Tips:	HeartBeat OK\r\n");
 				heart_beat = 1;
@@ -397,6 +440,68 @@ void OneNet_RevPro(unsigned char *cmd)
                         UsartPrintf(USART_DEBUG, "Tips:	MQTT Publish Send OK\r\n");
 
                     break;
+										
+										
+		case MQTT_PKT_PUBLISH:														//接收的Publish消息
+		
+			result = MQTT_UnPacketPublish(cmd, &cmdid_topic, &topic_len, &req_payload, &req_len, &qos, &pkt_id);
+			if(result == 0)
+			{
+				UsartPrintf(USART_DEBUG, "topic: %s, topic_len: %d, payload: %s, payload_len: %d\r\n",
+																	cmdid_topic, topic_len, req_payload, req_len);
+				
+				switch(qos)
+				{
+					case 1:															//收到publish的qos为1，设备需要回复Ack
+					
+						if(MQTT_PacketPublishAck(pkt_id, &mqttPacket) == 0)
+						{
+							UsartPrintf(USART_DEBUG, "Tips:	Send PublishAck\r\n");
+							HexArrayToString(mqttPacket._data, mqttPacket._len, mqttSenddataString);
+							BC35_SENDDATA(mqttSenddataString, (mqttPacket._len)*2);				//回复命令
+							ClearRAM((u8*)mqttSenddataString,200);//删包
+							MQTT_DeleteBuffer(&mqttPacket);									//删包
+						}
+					
+					break;
+					
+					case 2:															//收到publish的qos为2，设备先回复Rec
+																					//平台回复Rel，设备再回复Comp
+						if(MQTT_PacketPublishRec(pkt_id, &mqttPacket) == 0)
+						{
+							UsartPrintf(USART_DEBUG, "Tips:	Send PublishRec\r\n");
+							HexArrayToString(mqttPacket._data, mqttPacket._len, mqttSenddataString);
+							BC35_SENDDATA(mqttSenddataString, (mqttPacket._len)*2);				//回复命令
+							ClearRAM((u8*)mqttSenddataString,200);//删包
+							MQTT_DeleteBuffer(&mqttPacket);									//删包
+						}
+					
+					break;
+					
+					default:
+						break;
+				}
+			}
+		
+		break;
+			
+			
+		case MQTT_PKT_PUBREL:														//收到Publish消息，设备回复Rec后，平台回复的Rel，设备需再回复Comp
+			
+			if(MQTT_UnPacketPublishRel(cmd, pkt_id) == 0)
+			{
+				UsartPrintf(USART_DEBUG, "Tips:	Rev PublishRel\r\n");
+				if(MQTT_PacketPublishComp(MQTT_PUBLISH_ID, &mqttPacket) == 0)
+				{
+					UsartPrintf(USART_DEBUG, "Tips:	Send PublishComp\r\n");
+					HexArrayToString(mqttPacket._data, mqttPacket._len, mqttSenddataString);
+					BC35_SENDDATA(mqttSenddataString, (mqttPacket._len)*2);				//回复命令
+					ClearRAM((u8*)mqttSenddataString,200);//删包
+					MQTT_DeleteBuffer(&mqttPacket);									//删包
+				}
+			}
+		
+		break;
 
 		default:
                     result = -1;
